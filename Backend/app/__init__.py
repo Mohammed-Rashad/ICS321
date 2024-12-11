@@ -1,8 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-from my_flask_app.app.routes import passenger
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object('app.config.Config')

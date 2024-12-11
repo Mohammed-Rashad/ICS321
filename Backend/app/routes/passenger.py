@@ -14,3 +14,11 @@ def search_trains():
 
     # Placeholder logic
     return jsonify({"message": f"Searching trains from {source} to {destination} on {travel_date}"})
+
+@bp.route('/book_seats', methods = ['GET'])
+def book_seats():
+    return jsonify()
+
+@bp.route('/complete_payment', methods = ['GET'])
+def complete_payment():
+    return jsonify()
