@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from flask_jwt_extended import create_access_token
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -11,7 +11,15 @@ def login():
 
     # Replace with DB lookup
     if username == "test" and password == "password":
-        access_token = create_access_token(identity={"username": username})
-        return jsonify(access_token=access_token)
+        session['logged_in'] = True
+
+        access_token = create_access_token(identity = username)
+        return jsonify(access_token=access_token), 200
     else:
         return jsonify({"error": "Invalid credentials"}), 401
+    
+
+@bp.route('/logout', methods = ['POST'])
+def logout():
+    session['logged_in'] = False
+    return jsonify({"Logout":"succesful"})
