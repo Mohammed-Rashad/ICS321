@@ -239,3 +239,11 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-12-12 17:51:12
+
+CREATE TABLE admins (
+	ID int NOT NULL,
+    password Varchar(50),
+    Name Varchar(30) NOT NULL,
+    Salary float,
+    Primary key (ID)
+);

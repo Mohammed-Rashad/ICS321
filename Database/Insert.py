@@ -1,17 +1,45 @@
 import mysql.connector
 
+myHost = "localhost"
+myUser = "root"
+myPassword = "password"
+myDatabase = "TRAIN_MANAGEMENT_SYSTEM"
+
+def connectToDatabase():    # Establishes a connection and returns the connector object used by other functions
+                            # Use at the start of the program running
+    try:
+        conn = mysql.connector.connect(
+            host=myHost,
+            user=myUser,
+            password=myPassword,
+            database=myDatabase
+        )
+        return conn
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None
+
+
+def closeConnection(conn):      # Closes the connection
+                                # Use at the end of he program running
+    if conn.is_connected():
+        conn.close()
+        
 
 # The database connection is the first argument of every function in this file
 
-def insertTrain(conn, number, maxPassengers):
-    cur = conn.cursor()
-    query = "INSERT INTO train (trainNumber,maxPassenger) VALUES (%s,%s)"
-
-    # Input validation
-    if maxPassengers <= 0:
-        raise ValueError("MaxPassengers cannot be less than or equal to zero")
-
+def insertTrain(number, maxPassengers):
+    
     try:
+        conn = connectToDatabase()
+        cur = conn.cursor()
+        query = "INSERT INTO train (trainNumber,maxPassenger) VALUES (%s,%s)"
+
+        # Input validation
+        if maxPassengers <= 0:
+            raise ValueError("MaxPassengers cannot be less than or equal to zero")
+
         cur.execute(query, (number, maxPassengers))
         conn.commit()
         cur.close()
@@ -22,6 +50,7 @@ def insertTrain(conn, number, maxPassengers):
         conn.rollback()
     finally:
         cur.close()
+        conn.close()
 
 
 def insertPassenger(conn, id, name, balance):
@@ -181,3 +210,41 @@ def insertWaitlist(conn, passengerID, tripNumber, date, firstStation, lastStatio
         conn.rollback()
     finally:
         cur.close()
+
+# // a function to check username and password in the database admin table using 'with' keyword for better data handling //this comment is not chatgpted
+
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
+def checkAdmin(username, password):
+    try:
+        conn = connectToDatabase()  # Assuming this function provides a valid DB connection
+        cur = conn.cursor()
+        query = "SELECT username, password FROM admins WHERE username = %s"
+        cur.execute(query, (username,))
+        result = cur.fetchone()
+
+        # Check if user was found
+        if result:
+            # The result contains (username, hashed_password)
+            stored_username, stored_hashed_password = result
+
+            # Check if the password matches the stored hashed password
+            if check_password_hash(stored_hashed_password, password):
+                return True  # Admin credentials are valid
+            else:
+                return False  # Incorrect password
+        else:
+            return False  # No such admin user found
+
+    except mysql.connector.Error as e:
+        print(f"Error checking admin credentials: {e}")
+        return False  # Return False on error, you might want to log the error elsewhere
+
+    finally:
+        # Ensure resources are cleaned up properly
+        if cur:
+            cur.close()
+        if conn:
+            conn.commit()
+            
+checkAdmin("admin", "password") 
