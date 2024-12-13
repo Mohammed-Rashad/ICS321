@@ -34,6 +34,6 @@ def getConnection():
 
 
 def closeConnection(conn):      # Closes the connection
-                                # Use at the end of he program running
+                                # Use at the end of the program running
     if conn.is_connected():
         conn.close()
