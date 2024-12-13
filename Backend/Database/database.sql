@@ -187,6 +187,7 @@ DROP TABLE IF EXISTS `train`;
 CREATE TABLE `train` (
   `TrainNumber` int NOT NULL,
   `MaxPassenger` int NOT NULL,
+  `Cost` int NOT NULL,
   PRIMARY KEY (`TrainNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
