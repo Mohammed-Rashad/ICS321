@@ -5,9 +5,10 @@ bp = Blueprint('system', __name__, url_prefix= '/idk')
 @bp.route('/notifications', methods = ['GET'])
 @token_required
 def send_notification():
-    return jsonify()
+    return jsonify({"Notification":"Has Been Sent"})
+
 
 @bp.route('/departure_message', methods = ['GET'])
 @token_required
 def departure_message():
-    return jsonify()
+    return jsonify({"Alert":"Trip leaves in 3 Hours"})
