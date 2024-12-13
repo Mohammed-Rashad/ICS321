@@ -7,12 +7,13 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('app.config.Config')
     CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
     # Connect to database
     conn = connectToDatabase() #database connector
    
     # Initialize JWT
     JWTManager(app)
-
+ 
 
     # Register Blueprints
     from app.routes.auth import bp as auth_bp

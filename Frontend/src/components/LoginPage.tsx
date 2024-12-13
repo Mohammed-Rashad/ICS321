@@ -1,11 +1,14 @@
 import React, { useState, FormEvent} from 'react';
+import axios from 'axios';
+//import navigare
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
@@ -25,8 +28,39 @@ const LoginPage = () => {
 
     // Here you would typically handle login logic
     console.log('Login attempt with:', { email, password });
-    // Example: call an authentication service
-    // authService.login(email, password)
+    try {
+      // Make sure this URL matches your backend route
+      // const response = await axios.post('http://localhost:5000/auth/adminLogin', {
+      //   username: email,
+      //   password: password
+      // });
+      const response = await fetch('http://localhost:5000/auth/userLogin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({email, password})
+      });
+
+      // if response ok
+      if (response.ok) {
+      const data = await response.json();
+      // Store the token in localStorage
+      localStorage.setItem('token', data.access_token);
+      
+      // Redirect to dashboard
+      navigate('/dashboard');
+    } else {
+      // Handle login error
+      setError('Invalid credentials');
+    }
+
+    } catch (err) {
+      // Handle login error
+      setError('Invalid credentials');
+      console.error('Login failed', err);
+    }
+  
   };
 
   return (
@@ -104,6 +138,7 @@ const LoginPage = () => {
       </div>
     </div>
   );
+
 };
 
 export default LoginPage;
