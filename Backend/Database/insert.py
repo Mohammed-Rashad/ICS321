@@ -1,7 +1,6 @@
 import mysql.connector
 import Connect
 
-
 # The database connection is the first argument of every function in this file
 
 def insertTrain(number, maxPassengers):

@@ -10,7 +10,9 @@ const Header: React.FC = () => {
   const handleLogin = () => {
     navigate('/login');
   };
-
+  const handleSignUp = () => {
+    navigate('/signup');
+  };
   return (
       <header className="bg-blue-600 text-white p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
@@ -21,12 +23,22 @@ const Header: React.FC = () => {
             <a href="#" className="hover:text-blue-200">Schedule</a>
             <a href="#" className="hover:text-blue-200">Contact</a>
             {!isLoggedIn ? (
+              // put margin between buttons
+              <div className="space-x-4 mx-auto">
               <button 
                 onClick={handleLogin}
                 className="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
               >
                 Login
               </button>
+              <button 
+                onClick={handleSignUp}
+                className="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
+              >
+                Sing Up
+              </button>
+              </div>
+              
             ) : (
               // User profile or logout option would go here
               <span>Welcome, User</span>
