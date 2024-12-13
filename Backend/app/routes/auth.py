@@ -24,11 +24,10 @@ def logout():
     session['logged_in'] = False
     return jsonify({"Logout":"succesful"})
 
-
-from .Database import insert as db
+from Database import insert as db
 
 @bp.route('/adminLogin', methods=['POST'])
-def login():
+def adminLogin():
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -44,6 +43,6 @@ def login():
     
 
 @bp.route('/adminlogout', methods = ['POST'])
-def logout():
+def amdinLogout():
     session['logged_in'] = False
     return jsonify({"Logout":"succesful"})

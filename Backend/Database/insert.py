@@ -281,4 +281,4 @@ def addAdmin(email, password, name, salary):
             conn.commit()
 
 # print(addAdmin("mo@gmail.com", "password", "Mo", 1000.00))
-print(checkAdmin("mo@gmail.com", "password"))
+# print(checkAdmin("mo@gmail.com", "password"))
