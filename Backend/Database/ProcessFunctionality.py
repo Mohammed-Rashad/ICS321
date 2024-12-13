@@ -84,3 +84,57 @@ def availableSeats(tripNumber, date, initialStation, finalStation):     #use ini
 
     finally:
         cursor.close()
+
+
+#Takes a list of ids and a train number and returns if it is possible for all listed people to board the train
+def canAfford(idList, trainNumber):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT Cost
+    FROM train
+    WHERE TrainNumber = '%s'
+    """
+
+    try:
+        cursor.execute(query, (trainNumber,))
+        cost = cursor.fetchall()[0][0]
+        payment = {}
+        for id in idList:
+            query = """
+            SELECT *
+            FROM passenger
+            WHERE id = '%s'
+            """
+            cursor.execute(query, (id,))
+            if cursor.rowcount:
+                payment[id] = payment.get(id, 0) + cost
+            else:
+                query = """
+                SELECT GuardianID
+                FROM dependent
+                WHERE id = '%s'
+                """
+                cursor.execute(query, (id,))
+                guardian = cursor.fetchall()[0][0]
+                payment[guardian] = payment.get(guardian, 0) + cost
+
+        for id in idList:
+            query = """
+            SELECT Balance
+            FROM passenger
+            WHERE id = '%s'
+            """
+            cursor.execute(query, (id,))
+            balance = cursor.fetchall()[0][0]
+            if balance < payment[id]:
+                return False
+
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"Error while calculating cost: {err}")
+        return False
+    finally:
+        cursor.close()
