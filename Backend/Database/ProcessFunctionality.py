@@ -138,3 +138,38 @@ def canAfford(idList, trainNumber):
         return False
     finally:
         cursor.close()
+
+
+#createReservation already exists in 'Insert.py'
+
+#Complete payment
+
+#pay for a passenger to board a train
+def pay(trainNumber, id):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT cost
+    FROM train
+    WHERE TrainNumber = '%s'
+    """
+
+    try:
+        cursor.execute(query, (trainNumber,))
+        cost = cursor.fetchall()[0][0]
+
+        query = """
+        UPDATE Passenger
+        SET Balance = Balance - '%s'
+        WHERE ID = '%s'
+        """
+        cursor.execute(query, (cost, id))
+        conn.commit()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error while paying: {err}")
+        conn.rollback()
+        return False
+    finally:
+        cursor.close()
