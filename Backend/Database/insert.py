@@ -26,18 +26,18 @@ def insertTrain(number, maxPassengers):
         cur.close()
 
 
-def insertPassenger(id, name, balance):
+def insertPassenger(id, name, balance, password, email, phone):
     conn = Connect.getConnection()
 
-    # Input validation
+    # Input validation for balance
     if balance < 0:
         raise ValueError("Balance cannot be less than zero")
 
     cur = conn.cursor()
-    query = "INSERT INTO passenger (ID, Name, Balance) VALUES (%s, %s, %s)"
+    query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s)"
 
     try:
-        cur.execute(query, (id, name, balance))
+        cur.execute(query, (id, name, balance, password, email, phone))
         conn.commit()
         print("Inserted passenger successfully")
     except mysql.connector.Error as e:
@@ -191,6 +191,40 @@ def insertWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
         cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
         conn.commit()
         print("Inserted waitlist entry successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+
+
+def insertAdmin(id, email, password, name, salary):
+    conn = Connect.getConnection()
+
+    cur = conn.cursor()
+    query = "INSERT INTO admin (ID, Email, Password, Name, Salary) VALUES (%s, %s, %s, %s, %s)"
+
+    try:
+        cur.execute(query, (id, email, password, name, salary))
+        conn.commit()
+        print("Inserted admin successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+
+
+def insertEmployee(id, email, password, name, salary):
+    conn = Connect.getConnection()
+
+    cur = conn.cursor()
+    query = "INSERT INTO Employee (id, email, password, Name, Salary) VALUES (%s, %s, %s, %s, %s)"
+
+    try:
+        cur.execute(query, (id, email, password, name, salary))
+        conn.commit()
+        print("Inserted employee successfully")
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
