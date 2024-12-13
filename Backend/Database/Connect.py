@@ -6,6 +6,8 @@ myUser = "root"
 myPassword = "password"
 myDatabase = "TRAIN_MANAGEMENT_SYSTEM"
 
+connection = None
+
 
 def connectToDatabase():    # Establishes a connection and returns the connector object used by other functions
                             # Use at the start of the program running
@@ -23,7 +25,15 @@ def connectToDatabase():    # Establishes a connection and returns the connector
         return None
 
 
+def getConnection():
+    global connection
+    if not connection:
+        connection = connectToDatabase()
+        print("connection established")
+    return connection
+
+
 def closeConnection(conn):      # Closes the connection
-                                # Use at the end of he program running
+                                # Use at the end of the program running
     if conn.is_connected():
         conn.close()
