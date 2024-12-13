@@ -8,7 +8,7 @@ import Main from "./components/Main";
 import AdminLoginPage from "./components/AdminLogin";
 import ProtectedRoute from './components/ProtectedRoute';
 import RailwayDashboard from "./components/RailWayDashboard";
-import SignupForm from "./components/Signup";
+import SignupForm from "./components/SignUp";
 // you can use the components in other components
 function App() { 
   return (

@@ -1,5 +1,5 @@
 import mysql.connector
-import Connect
+from . import Connect
 
 # The database connection is the first argument of every function in this file
 
@@ -229,3 +229,70 @@ def insertEmployee(id, email, password, name, salary):
         conn.rollback()
     finally:
         cur.close()
+
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
+def checkAdmin(email, password):
+    try:
+        conn = Connect.getConnection()  # Assuming this function provides a valid DB connection
+        cur = conn.cursor()
+        query = "SELECT email, password FROM admin WHERE email = %s"
+        cur.execute(query, (email,))
+        result = cur.fetchone()
+
+        # Check if user was found
+        if result:
+            # The result contains (username, hashed_password)
+            stored_username, stored_hashed_password = result
+
+            # Check if the password matches the stored hashed password
+            if check_password_hash(stored_hashed_password, password):
+                return True  # Admin credentials are valid
+            else:
+                return False  # Incorrect password
+        else:
+            return False  # No such admin user found
+
+    except mysql.connector.Error as e:
+        print(f"Error checking admin credentials: {e}")
+        return False  # Return False on error, you might want to log the error elsewhere
+
+    finally:
+        # Ensure resources are cleaned up properly
+        if cur:
+            cur.close()
+        if conn:
+            conn.commit()
+            
+# admin schema
+# CREATE TABLE admin (
+#     ID INT AUTO_INCREMENT NOT NULL,           -- Automatically incremented primary key
+#     email VARCHAR(100) NOT NULL,              -- Email cannot be null
+#     password VARCHAR(255) NOT NULL,           -- Sufficient space for hashed passwords
+#     Name VARCHAR(30) NOT NULL,                -- Name of the admin, cannot be null
+#     Salary DECIMAL(10, 2),                    -- Salary with 2 decimal places
+#     PRIMARY KEY (ID),                        -- Primary key on ID
+#     UNIQUE (email)                           -- Ensure email is unique across all records
+# );
+# a function that created a new admin user
+def addAdmin(email, password, name, salary):
+    try:
+        conn = Connect.getConnection()  # Assuming this function provides a valid DB connection
+        cur = conn.cursor()
+        query = "INSERT INTO admin (email, password, Name, Salary) VALUES (%s, %s, %s, %s)"
+        hashed_password = generate_password_hash(password)  # Hash the password before storing
+        cur.execute(query, (email, hashed_password, name, salary))
+        conn.commit()
+        return True  # Admin user added successfully
+
+    except mysql.connector.Error as e:
+        print(f"Error adding admin user: {e}")
+        conn.rollback()
+        return False  # Return False on error, you might want to log the error elsewhere
+
+    finally:
+        # Ensure resources are cleaned up properly
+        if cur:
+            cur.close()
+        if conn:
+            conn.commit()

@@ -10,7 +10,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!token) {
     // Redirect to login if no token
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/adminLogin" replace />;
   }
 
   return <>{children}</>;

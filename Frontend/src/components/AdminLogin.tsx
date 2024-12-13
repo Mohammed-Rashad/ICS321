@@ -38,7 +38,7 @@ const AdminLoginPage = () => {
       localStorage.setItem('token', response.data.access_token);
 
       // Redirect to dashboard
-      navigate('/profile');
+      navigate('/dashboard');
     } catch (err) {
       // Handle login error
       setError('Invalid credentials');
