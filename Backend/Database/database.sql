@@ -242,3 +242,13 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-12-12 17:51:12
+
+CREATE TABLE admin (
+    ID INT AUTO_INCREMENT NOT NULL,           -- Automatically incremented primary key
+    email VARCHAR(100) NOT NULL,              -- Email cannot be null
+    password VARCHAR(255) NOT NULL,           -- Sufficient space for hashed passwords
+    Name VARCHAR(30) NOT NULL,                -- Name of the admin, cannot be null
+    Salary DECIMAL(10, 2),                    -- Salary with 2 decimal places
+    PRIMARY KEY (ID),                        -- Primary key on ID
+    UNIQUE (email)                           -- Ensure email is unique across all records
+);
