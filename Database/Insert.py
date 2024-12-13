@@ -1,9 +1,11 @@
 import mysql.connector
+import Connect
 
 
 # The database connection is the first argument of every function in this file
 
-def insertTrain(conn, number, maxPassengers):
+def insertTrain(number, maxPassengers):
+    conn = Connect.getConnection()
     cur = conn.cursor()
     query = "INSERT INTO train (trainNumber,maxPassenger) VALUES (%s,%s)"
 
@@ -24,7 +26,8 @@ def insertTrain(conn, number, maxPassengers):
         cur.close()
 
 
-def insertPassenger(conn, id, name, balance):
+def insertPassenger(id, name, balance):
+    conn = Connect.getConnection()
 
     # Input validation
     if balance < 0:
@@ -45,7 +48,9 @@ def insertPassenger(conn, id, name, balance):
 
 
 # Insert Dependent function
-def insertDependent(conn, id, name, guardianID):
+def insertDependent(id, name, guardianID):
+    conn = Connect.getConnection()
+
     cur = conn.cursor()
 
     # Check if the guardian exists
@@ -69,7 +74,9 @@ def insertDependent(conn, id, name, guardianID):
 
 
 # Insert Station function
-def insertStation(conn, name, city):
+def insertStation(name, city):
+    conn = Connect.getConnection()
+
     cur = conn.cursor()
 
     query = "INSERT INTO station (Name, City) VALUES (%s, %s)"
@@ -84,7 +91,9 @@ def insertStation(conn, name, city):
         cur.close()
 
 
-def insertTrip(conn, tripNumber, date, trainNumber):
+def insertTrip(tripNumber, date, trainNumber):
+    conn = Connect.getConnection()
+
     cur = conn.cursor()
 
     check_train_query = "SELECT COUNT(*) FROM train WHERE TrainNumber = %s"
@@ -112,7 +121,9 @@ def insertTrip(conn, tripNumber, date, trainNumber):
 
 
 
-def insertTripStop(conn, tripNumber, date, stopOrder, stationName):     # Seats available is set to number of seats by default
+def insertTripStop(tripNumber, date, stopOrder, stationName):     # Seats available is set to number of seats by default
+    conn = Connect.getConnection()
+
     cur = conn.cursor()
 
     # Query to get MaxPassenger from the train table
@@ -152,7 +163,9 @@ def insertTripStop(conn, tripNumber, date, stopOrder, stationName):     # Seats 
 
 
 # Insert Reservation function
-def insertReservation(conn, passengerID, tripNumber, date, firstStation, lastStation, seatNumber):
+def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, seatNumber):
+    conn = Connect.getConnection()
+
     cur = conn.cursor()
 
     query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -168,7 +181,9 @@ def insertReservation(conn, passengerID, tripNumber, date, firstStation, lastSta
 
 
 # Insert Waitlist function
-def insertWaitlist(conn, passengerID, tripNumber, date, firstStation, lastStation):
+def insertWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
+    conn = Connect.getConnection()
+
     cur = conn.cursor()
 
     query = "INSERT INTO waitlist (PassengerID, TripNumber, Date, FirstStation, LastStation) VALUES (%s, %s, %s, %s, %s)"
