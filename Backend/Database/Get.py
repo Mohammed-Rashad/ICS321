@@ -2,6 +2,30 @@ import mysql.connector
 from . import Connect
 
 
+def getAllTrains():
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "SELECT * FROM train"
+    try:
+        cur.execute(query)
+        result = cur.fetchall()
+        if result:
+            print(f"Train details: {result}")
+            return result
+        else:
+            print(f"No trains found.")
+            return None
+    except mysql.connector.Error as e:
+        print(f"Error fetching data: {e}")
+        return None
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return None
+    finally:
+        cur.close()
+    
+    
+    
 def getTrain(trainNumber):
     conn = Connect.getConnection()
     cur = conn.cursor()
@@ -289,10 +313,10 @@ def checkAdmin(email, password):
         # Check if user was found
         if result:
             # The result contains (username, hashed_password)
-            id, stored_username, stored_hashed_password = result
+            id, stored_username, stored_password = result
 
             # Check if the password matches the stored hashed password
-            if check_password_hash(stored_hashed_password, password):
+            if stored_password == password:
                 return result  # Admin credentials are valid
             else:
                 return None  # Incorrect password

@@ -62,6 +62,34 @@ const initialPassengers = [
   }
 ];
 
+// fetch /train/all to get all trains and put them in the initialTrains array
+const fetchTrains = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/train/all', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      let trainsList = data.Trains;
+      console.log('Trains:', trainsList);
+      for (let i = 0; i < trainsList.length; i++) {
+        const train = {
+          name: trainsList[i].train_name,
+          stations: trainsList[i].stations,
+          maxPassengers: trainsList[i].max_passengers
+        };
+        initialTrains.push(train);
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching trains:', error);
+    alert('Failed to fetch trains. Please try again.');
+  }
+}
+fetchTrains();
 const RailwayDashboard = () => {
   const [trains, setTrains] = useState(initialTrains);
   const [staff, setStaff] = useState(initialStaff);
@@ -92,7 +120,7 @@ const RailwayDashboard = () => {
     maxPassengers: ''
   });
   // Previous methods remain the same...
-
+  
   // New method to handle staff creation
   const createStaff = (e: any) => {
     e.preventDefault();

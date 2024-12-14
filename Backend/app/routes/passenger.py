@@ -28,7 +28,6 @@ def search_trains():
     return jsonify({"search":"placeholder"})
 
 @bp.route('/book_seats', methods = ['POST'])
-@token_required
 @role_required('user')
 def book_seats():
     data = request.json
@@ -41,6 +40,7 @@ def book_seats():
     lastStation = data.get('lastStation')
     
     passenger_information = getPassenger(passengerID)
+    print(passenger_information)
     availablebalance = passenger_information.get('balance') 
     trip_data = getTrip(tripNumber, date)
     if trip_data.get(''):##CHECK SEATS      

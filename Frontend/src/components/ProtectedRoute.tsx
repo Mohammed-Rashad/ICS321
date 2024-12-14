@@ -6,9 +6,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const token = localStorage.getItem('token');
+  
+  const role = localStorage.getItem('role');
 
-  if (!token) {
+  if (!role || role !== 'admin') {
     // Redirect to login if no token
     return <Navigate to="/adminLogin" replace />;
   }

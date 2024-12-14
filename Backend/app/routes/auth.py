@@ -58,7 +58,7 @@ def userLogin():
     password = data.get('password')
     print(email, password)
     result = getDb.checkUser(email, password)
-    print(result)
+    print("result", result)
     if result:
         id, email, password, name = result
         # Create a session for the normal user

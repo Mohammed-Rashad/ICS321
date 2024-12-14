@@ -202,7 +202,6 @@ def insertAdmin(id, email, password, name, salary):
     conn = Connect.getConnection()
 
     cur = conn.cursor()
-    password = generate_password_hash(password)
     query = "INSERT INTO admin (ID, Email, Password, Name, Salary) VALUES (%s, %s, %s, %s, %s)"
 
     try:

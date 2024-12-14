@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.decorators import token_required, role_required
 from Database.insert import insertTrain
 from Database.Delete import deleteTrain
-from Database.Get import getTrain
+from Database.Get import getTrain, getAllTrains
 bp = Blueprint('train', __name__, url_prefix='/train')
 
 @bp.route('/insert_train', methods=['POST'])
@@ -38,7 +38,6 @@ def get_train():
 
 
 @bp.route('/delete_train', methods=['POST'])
-@token_required
 @role_required('admin')
 def delete_train():
     data = request.json
@@ -47,5 +46,18 @@ def delete_train():
     deleteTrain(number)
 
     return jsonify({"Train": "Inserted Successfully"})
+
+# get all trains
+@bp.route('/all', methods=['GET'])
+def all():
+    trains = getAllTrains()
+    if not trains:
+        return jsonify({"Trains": []})
+    trainsList = []
+    for train in trains:
+        trainNumber, maxPassengers = train
+        trainsList.append({"trainNumber": trainNumber, "maxPassengers": maxPassengers})
+        
+    return jsonify({"Trains": trainsList}) 
 
 

@@ -35,10 +35,15 @@ const AdminLoginPage = () => {
       });
       console.log('Login response:', response.data);
       // Store the token in localStorage
-      localStorage.setItem('token', response.data.access_token);
+      // localStorage.setItem('token', response.data.access_token);
       
+      localStorage.setItem('role', response.data.role);
+      localStorage.setItem('loggedIn', response.data.loggedIn);
+      
+      console.log('navigate to dashboard');
       // Redirect to dashboard
       navigate('/dashboard');
+      
     } catch (err) {
       // Handle login error
       setError('Invalid credentials');
