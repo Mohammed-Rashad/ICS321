@@ -3,7 +3,7 @@ import mysql.connector
 # Replace username and password
 myHost = "localhost"
 myUser = "root"
-myPassword = "password"
+myPassword = "FreeSyria:)"
 myDatabase = "TRAIN_MANAGEMENT_SYSTEM"
 
 connection = None

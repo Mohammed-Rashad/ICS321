@@ -1,20 +1,19 @@
 import mysql.connector
-import Connect
-
+from . import Connect
 
 # The database connection is the first argument of every function in this file
 
-def insertTrain(number, maxPassengers):
+def insertTrain(number, maxPassengers, cost):
     conn = Connect.getConnection()
     cur = conn.cursor()
-    query = "INSERT INTO train (trainNumber,maxPassenger) VALUES (%s,%s)"
+    query = "INSERT INTO train (trainNumber, maxPassenger, cost) VALUES (%s,%s,%s)"
 
     # Input validation
     if maxPassengers <= 0:
         raise ValueError("MaxPassengers cannot be less than or equal to zero")
 
     try:
-        cur.execute(query, (number, maxPassengers))
+        cur.execute(query, (number, maxPassengers, cost))
         conn.commit()
         cur.close()
 

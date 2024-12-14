@@ -1,5 +1,5 @@
 import mysql.connector
-import Connect
+from . import Connect
 
 
 def getTrain(trainNumber):
