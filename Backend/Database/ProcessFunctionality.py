@@ -141,6 +141,7 @@ def canAfford(idList, trainNumber):
 
 
 #createReservation already exists in 'Insert.py'
+#createWaitlist also exists in 'Insert.py'
 
 #Complete payment
 
@@ -173,3 +174,13 @@ def pay(trainNumber, id):
         return False
     finally:
         cursor.close()
+
+
+#Functions of Staff/Admin
+
+#Add/Edit/Cancel reservation/ticket
+#Add and cancel already exist
+#For edit just remove and add again (don't forget to check the valid seat numbers for the adjusted trip and the cost and everything)
+
+#Assign staff to a train for a given date
+#Insert/Delete/Get Assigned were added

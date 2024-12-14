@@ -229,3 +229,19 @@ def insertEmployee(id, email, password, name, salary):
         conn.rollback()
     finally:
         cur.close()
+
+
+def insertAssigned(id, date, number):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "INSERT INTO Assigned (employeeId, Date, trainNumber) VALUES (%s, %s, %s)"
+
+    try:
+        cur.execute(query, (id, date, number))
+        conn.commit()
+        print("Inserted assigned successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
