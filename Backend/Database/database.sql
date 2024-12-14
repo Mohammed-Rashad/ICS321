@@ -284,6 +284,7 @@ CREATE TABLE `trip` (
 
 LOCK TABLES `trip` WRITE;
 /*!40000 ALTER TABLE `trip` DISABLE KEYS */;
+INSERT INTO `trip` VALUES (1,'2024-12-17',1),(1,'2024-12-15',2),(1,'2024-12-16',2),(2,'2024-12-15',3),(2,'2024-12-16',4),(2,'2024-12-17',5);
 /*!40000 ALTER TABLE `trip` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,6 +313,7 @@ CREATE TABLE `trip_stop` (
 
 LOCK TABLES `trip_stop` WRITE;
 /*!40000 ALTER TABLE `trip_stop` DISABLE KEYS */;
+INSERT INTO `trip_stop` VALUES (1,'2024-12-17','Aramco','14:30:00'),(2,'2024-12-16','Aramco','07:15:00'),(2,'2024-12-15','Central Station','15:00:00'),(2,'2024-12-17','Central Station','19:30:00'),(2,'2024-12-15','Haram','14:00:00'),(2,'2024-12-16','Haram','09:00:00'),(2,'2024-12-17','Haram','16:30:00'),(1,'2024-12-16','JED Airport','12:00:00'),(1,'2024-12-17','JED Airport','09:00:00'),(1,'2024-12-15','KFUPM','09:00:00'),(1,'2024-12-16','KFUPM','15:30:00'),(1,'2024-12-17','KFUPM','17:30:00'),(1,'2024-12-17','Mountain','07:15:00'),(2,'2024-12-15','Mountain','16:30:00'),(2,'2024-12-17','Mountain','15:00:00'),(1,'2024-12-15','Port','14:00:00'),(1,'2024-12-16','Port','19:30:00'),(2,'2024-12-15','School','18:30:00'),(2,'2024-12-17','School','14:15:00'),(1,'2024-12-15','Tala Mall','11:00:00'),(2,'2024-12-16','Tala Mall','14:30:00'),(1,'2024-12-15','Tower','11:30:00'),(1,'2024-12-16','Tower','10:30:00'),(2,'2024-12-16','Tower','17:30:00');
 /*!40000 ALTER TABLE `trip_stop` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -355,4 +357,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-14 20:30:49
+-- Dump completed on 2024-12-14 23:07:00

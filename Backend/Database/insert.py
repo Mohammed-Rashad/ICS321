@@ -210,3 +210,23 @@ def insertAssigned(id, date, number):
         conn.rollback()
     finally:
         cur.close()
+
+
+def insertTrip(tripNumber, date, trainNumber):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+
+    try:
+        query = """
+        INSERT INTO trip (TripNumber, Date, TrainNumber) VALUES (%s, %s, %s)
+        """
+        cur.execute(query, (tripNumber, date, trainNumber))
+        conn.commit()
+        print("Inserted trip successfully")
+
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+
+    finally:
+        cur.close()
