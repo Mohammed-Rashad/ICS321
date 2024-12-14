@@ -19,8 +19,10 @@ def insert_train():
     # generate random 32bit number randomly 
     
     max_passengers = data.get('max_passengers')
-    print("hi")
-    insertTrain(number, max_passengers)
+    print("hi")    
+    cost = data.get('cost')
+
+    insertTrain(number, max_passengers,cost)
 
     return jsonify({"Train": "Inserted Successfully"})
 
