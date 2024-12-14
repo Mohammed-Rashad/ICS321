@@ -29,7 +29,7 @@ def get_passenger():
     data = request.json
     id = data.get('id')
 
-    passenger = insertPassenger(id)
+    passenger = getPassenger(id)
 
     return jsonify({"Passenger": passenger})
 
@@ -41,5 +41,5 @@ def delete_passenger():
   
     deletePassenger(id)
 
-    return jsonify({"Passenger": "Inserted Successfully"})
+    return jsonify({"Passenger": "Deleted Successfully"})
 

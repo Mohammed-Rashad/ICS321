@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app.decorators import token_required, role_required
-from Database.Get import getPassenger, getReservation, getTrip
+from Database.Get import getPassenger, getReservation, getTripStop
 from Database.insert import insertWaitlist, insertReservation
+from Database.ProcessFunctionality import searchForTrain, availableSeats, canAfford, pay, getAllReservations
 from Constants import TICKET_PRICE as TP
 
 # Create a blueprint for passenger-related routes
@@ -11,45 +12,52 @@ bp = Blueprint('passenger', __name__, url_prefix='/passenger')
 @token_required
 @role_required('user')
 def search_trains():
+    data = request.json
+    initialStation = data.get('initialStation')
+    finalStation = data.get('finalStation')
+    date = data.get('date')
 
-    ##placeholder BS
-    # source = request.args.get('source')
-    # destination = request.args.get('destination')
-    # travel_date = request.args.get('date')
-    
-    # if not all([source, destination, travel_date]):
-    #     return jsonify({"error": "Missing required parameters"}), 400
+    available_trains = searchForTrain(initialStation, finalStation, date)
 
-    # # Placeholder logic
-    #return jsonify({"message": f"Searching trains from {source} to {destination} on {travel_date}"})
-
-    return jsonify({"search":"placeholder"})
+    return jsonify({"Available Trains":available_trains})
 
 @bp.route('/book_seats', methods = ['POST'])
 @token_required
 @role_required('user')
 def book_seats():
     data = request.json
-    passengerID = data.get('passengerID')
+    #passengerID is a list of passenger and dependent ids who want to book the train with the passenger at index 0 
+    passengerIDs = data.get('passengerIDs')
     tripNumber = data.get('tripNumber')
     date = data.get('date')
-    firstStation = data.get('firstStation')
-    lastStation = data.get('lastStation')
+    stopOrder = data.get('stopOrder')
 
-    passenger_information = getPassenger(passengerID)
-    availablebalance = passenger_information.get('balance') 
-    trip_data = getTrip(tripNumber, date)
-    if trip_data.get(''):##CHECK SEATS      
+    trip_data = getTripStop(tripNumber, date, stopOrder)#get the initial and final stations from the tripNumber
 
-        if availablebalance < TP:
-            return jsonify({"Not enough funds in wallet":"Reservation Aborted"})
+    firstStation = trip_data.get('firstStation')
+    lastStation = trip_data.get('lastStation')
+
+    seatList = availableSeats(tripNumber, date, firstStation, lastStation)
+
+    if len(seatList) >= len(passengerIDs):##CHECK SEATS are enough     
+
+        if canAfford(passengerIDs):#check if all passenger can afford
+            seatIterator = 0
+
+            for id in passengerIDs: #create reservation for each
+                seatNumber = seatList[seatIterator]
+                insertReservation(id,tripNumber,date,firstStation,lastStation, seatNumber)
+                seatIterator +=1
+
+            return jsonify({"Seat/s":"Booked Successfully"})
+            
         else:
-            ##update balance
-            insertReservation(passengerID,tripNumber,date,firstStation,lastStation)
-            return jsonify({"Seat":"Booked Successfully"})
+            return jsonify({"Balance Not Enough":"Reservation Aborted"})
 
     else:
-        insertWaitlist(passengerID,tripNumber,date,firstStation,lastStation)
+        for id in passengerIDs: #create waitlist for each
+                insertWaitlist(id,tripNumber,date,firstStation,lastStation) 
+
         return jsonify({"Seats Unavailable":"Waitlisted Successfully"})
 
 
@@ -58,5 +66,27 @@ def book_seats():
 @token_required
 @role_required('user')
 def complete_payment():
-    
-    return jsonify({"Payment":"Successful"})
+    data = request.json
+    passengerID = data.get('passengerID')
+    tripNumber = data.get('tripNumber')
+    date = data.get('date')
+    stopOrder = data.get('stopOrder')
+
+    trip_data = getTripStop(tripNumber, date, stopOrder)#get the initial and final stations from the tripNumber
+
+    firstStation = trip_data.get('firstStation')
+    lastStation = trip_data.get('lastStation')
+    if pay(passengerID, tripNumber, date, firstStation, lastStation):
+        tickets = {}  # Initialize an empty dictionary to hold all tickets
+
+        # Iterate over all reservations for the passenger
+        for each in getAllReservations(passengerID):
+            tripNumber = each.get('TripNumber')  # Get the trip number from the reservation
+            seatNumber = each.get('SeatNumber')  # Get the seat number from the reservation
+            tickets[tripNumber] = seatNumber  # Add the trip number and seat number to the dictionary
+
+        # Return the dictionary of tickets as part of the response
+        return jsonify({"Payment Successful": tickets})
+
+    else:
+        return jsonify({"Payment Unsuccessful":"Payment Incompleted"})

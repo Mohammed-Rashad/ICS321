@@ -68,8 +68,9 @@ def get_tripStop():
     data = request.json
     tripNumber = data.get('tripNumber')
     date = data.get('date')
-   
-    tripStop = getTripStop(tripNumber, date)
+    stopOrder = data.get('stopOrder')
+    
+    tripStop = getTripStop(tripNumber, date, stopOrder)
 
     return jsonify({"TripStop": tripStop})
 

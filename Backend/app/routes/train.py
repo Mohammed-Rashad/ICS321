@@ -12,8 +12,9 @@ def insert_train():
     data = request.json
     number = data.get('number')
     max_passengers = data.get('max_passengers')
+    cost = data.get('cost')
 
-    insertTrain(number, max_passengers)
+    insertTrain(number, max_passengers,cost)
 
     return jsonify({"Train": "Inserted Successfully"})
 
