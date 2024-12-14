@@ -145,28 +145,65 @@ def canAfford(idList, trainNumber):
 
 #Complete payment
 
-#pay for a passenger to board a train
-def pay(trainNumber, id):
+#pay for a reservation
+#Note: returns true if paid successfully or if already paid before
+def pay(passengerID, tripNumber, date, firstStation, lastStation):
     conn = Connect.getConnection()
     cursor = conn.cursor()
 
     query = """
     SELECT cost
     FROM train
-    WHERE TrainNumber = '%s'
+    JOIN trip
+    ON train.TrainNumber = trip.TrainNumber
+    WHERE TripNumber = '%s'
+    and Date = '%s'
     """
 
     try:
-        cursor.execute(query, (trainNumber,))
+        cursor.execute(query, (tripNumber, date))
         cost = cursor.fetchall()[0][0]
+
+        query = """
+        SELECT hasPaid
+        FROM reservation
+        WHERE PassengerID = '%s'
+        AND TripNumber = '%s'
+        AND Date = '%s'
+        AND FirstStation = '%s'
+        AND LastStation = '%s'
+        """
+
+        cursor.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        hasPaid = cursor.fetchall()[0][0]
+
+        if hasPaid:
+            return True
+
+        if not canAfford([passengerID], tripNumber):
+            return False
 
         query = """
         UPDATE Passenger
         SET Balance = Balance - '%s'
         WHERE ID = '%s'
         """
+
         cursor.execute(query, (cost, id))
+
+        query = """
+        UPDATE reservation
+        SET hasPaid = 1
+        WHERE PassengerID = '%s'
+        AND TripNumber = '%s'
+        AND Date = '%s'
+        AND FirstStation = '%s'
+        AND LastStation = '%s'
+        """
+
+        cursor.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
         conn.commit()
+
         return True
     except mysql.connector.Error as err:
         print(f"Error while paying: {err}")
