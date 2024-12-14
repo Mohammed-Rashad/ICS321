@@ -33,10 +33,10 @@ def insertPassenger(id, name, balance, password, email, phone):
         raise ValueError("Balance cannot be less than zero")
 
     cur = conn.cursor()
-    query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone, isLoyalty) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
     try:
-        cur.execute(query, (id, name, balance, password, email, phone))
+        cur.execute(query, (id, name, balance, password, email, phone, 0))
         conn.commit()
         print("Inserted passenger successfully")
     except mysql.connector.Error as e:

@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
--- Host: localhost    Database: train_management_system
+-- Host: localhost    Database: TRAIN_MANAGEMENT_SYSTEM
 -- ------------------------------------------------------
 -- Server version	8.0.40
 
@@ -40,6 +40,33 @@ CREATE TABLE `admin` (
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `assigned`
+--
+
+DROP TABLE IF EXISTS `assigned`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assigned` (
+  `employeeID` int NOT NULL,
+  `date` date NOT NULL,
+  `trainNumber` int NOT NULL,
+  PRIMARY KEY (`employeeID`,`date`),
+  KEY `trainNumber` (`trainNumber`),
+  CONSTRAINT `assigned_ibfk_1` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`),
+  CONSTRAINT `assigned_ibfk_2` FOREIGN KEY (`trainNumber`) REFERENCES `train` (`TrainNumber`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `assigned`
+--
+
+LOCK TABLES `assigned` WRITE;
+/*!40000 ALTER TABLE `assigned` DISABLE KEYS */;
+/*!40000 ALTER TABLE `assigned` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -109,6 +136,7 @@ CREATE TABLE `passenger` (
   `password` varchar(20) NOT NULL,
   `email` varchar(30) NOT NULL,
   `phone` varchar(14) NOT NULL,
+  `isLoyalty` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -133,15 +161,16 @@ CREATE TABLE `reservation` (
   `PassengerID` int NOT NULL,
   `TripNumber` int NOT NULL,
   `Date` date NOT NULL,
-  `FirstStation` int NOT NULL,
-  `LastStation` int NOT NULL,
+  `firstStation` time NOT NULL,
+  `lastStation` time NOT NULL,
   `SeatNumber` int NOT NULL,
-  PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`FirstStation`,`LastStation`),
-  KEY `TripNumber` (`TripNumber`,`Date`,`FirstStation`),
-  KEY `TripNumber_2` (`TripNumber`,`Date`,`LastStation`),
-  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`),
-  CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`TripNumber`, `Date`, `FirstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `StopOrder`),
-  CONSTRAINT `reservation_ibfk_3` FOREIGN KEY (`TripNumber`, `Date`, `LastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `StopOrder`)
+  `hasPaid` tinyint(1) NOT NULL,
+  PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
+  KEY `TripNumber` (`TripNumber`,`Date`,`firstStation`),
+  KEY `TripNumber_2` (`TripNumber`,`Date`,`lastStation`),
+  CONSTRAINT `first_stop` FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  CONSTRAINT `last_stop` FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -174,6 +203,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
+INSERT INTO `station` VALUES ('KFUPM','Dharan');
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,10 +267,9 @@ DROP TABLE IF EXISTS `trip_stop`;
 CREATE TABLE `trip_stop` (
   `TripNumber` int NOT NULL,
   `Date` date NOT NULL,
-  `StopOrder` int NOT NULL,
   `StationName` varchar(15) NOT NULL,
-  `SeatsAvailable` int NOT NULL,
-  PRIMARY KEY (`TripNumber`,`Date`,`StopOrder`),
+  `Time` time NOT NULL,
+  PRIMARY KEY (`TripNumber`,`Date`,`Time`),
   KEY `StationName` (`StationName`),
   CONSTRAINT `trip_stop_ibfk_1` FOREIGN KEY (`TripNumber`, `Date`) REFERENCES `trip` (`TripNumber`, `Date`),
   CONSTRAINT `trip_stop_ibfk_2` FOREIGN KEY (`StationName`) REFERENCES `station` (`Name`)
@@ -267,14 +296,14 @@ CREATE TABLE `waitlist` (
   `PassengerID` int NOT NULL,
   `TripNumber` int NOT NULL,
   `Date` date NOT NULL,
-  `FirstStation` int NOT NULL,
-  `LastStation` int NOT NULL,
-  PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`FirstStation`,`LastStation`),
-  KEY `TripNumber` (`TripNumber`,`Date`,`FirstStation`),
-  KEY `TripNumber_2` (`TripNumber`,`Date`,`LastStation`),
+  `firstStation` time NOT NULL,
+  `lastStation` time NOT NULL,
+  PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
+  KEY `TripNumber` (`TripNumber`,`Date`,`firstStation`),
+  KEY `TripNumber_2` (`TripNumber`,`Date`,`lastStation`),
+  CONSTRAINT `waitlist_first_stop` FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
   CONSTRAINT `waitlist_ibfk_1` FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`),
-  CONSTRAINT `waitlist_ibfk_2` FOREIGN KEY (`TripNumber`, `Date`, `FirstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `StopOrder`),
-  CONSTRAINT `waitlist_ibfk_3` FOREIGN KEY (`TripNumber`, `Date`, `LastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `StopOrder`)
+  CONSTRAINT `waitlist_last_stop` FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -296,4 +325,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-13 17:10:30
+-- Dump completed on 2024-12-14 16:52:16
