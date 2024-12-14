@@ -232,3 +232,30 @@ def addAdmin(email, password, name, salary):
             cur.close()
         if conn:
             conn.commit()
+            
+            
+# insert trips
+# CREATE TABLE `trip` (
+#   `TripNumber` int NOT NULL,
+#   `Date` date NOT NULL,
+#   `TrainNumber` int NOT NULL,
+#   PRIMARY KEY (`TripNumber`,`Date`),
+#   KEY `TrainNumber` (`TrainNumber`),
+#   CONSTRAINT `trip_ibfk_1` FOREIGN KEY (`TrainNumber`) REFERENCES `train` (`TrainNumber`)
+# ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+def insertTrip(tripNumber, date, trainNumber):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "INSERT INTO trip (TripNumber, Date, TrainNumber) VALUES (%s, %s, %s)"
+
+    try:
+        cur.execute(query, (tripNumber, date, trainNumber))
+        conn.commit()
+        cur.close()
+        print("Inserted trip successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
