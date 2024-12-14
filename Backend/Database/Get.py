@@ -1,5 +1,5 @@
 import mysql.connector
-import Connect
+from . import Connect
 
 
 def getTrain(trainNumber):
@@ -266,6 +266,34 @@ def getWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
             return result
         else:
             print(f"No waitlist found for PassengerID {passengerID}, TripNumber {tripNumber}, Date {date}.")
+            return None
+
+    except mysql.connector.Error as e:
+        print(f"Error retrieving data: {e}")
+        return None
+
+    finally:
+        cur.close()
+
+
+def getAssigned(id, date):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+
+    query = """
+    SELECT * FROM assigned
+    WHERE employeeID = %s AND Date = %s
+    """
+
+    try:
+        cur.execute(query, (id, date))
+        result = cur.fetchone()
+
+        if result:
+            print(f"Assigned details for employee {id}, Date {date}: {result}")
+            return result
+        else:
+            print(f"No assigned found for employee {id}, Date {date}.")
             return None
 
     except mysql.connector.Error as e:

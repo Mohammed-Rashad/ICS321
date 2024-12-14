@@ -1,20 +1,19 @@
 import mysql.connector
-import Connect
-
+from . import Connect
 
 # The database connection is the first argument of every function in this file
 
-def insertTrain(number, maxPassengers):
+def insertTrain(number, maxPassengers, cost):
     conn = Connect.getConnection()
     cur = conn.cursor()
-    query = "INSERT INTO train (trainNumber,maxPassenger) VALUES (%s,%s)"
+    query = "INSERT INTO train (trainNumber, maxPassenger, cost) VALUES (%s,%s,%s)"
 
     # Input validation
     if maxPassengers <= 0:
         raise ValueError("MaxPassengers cannot be less than or equal to zero")
 
     try:
-        cur.execute(query, (number, maxPassengers))
+        cur.execute(query, (number, maxPassengers, cost))
         conn.commit()
         cur.close()
 
@@ -168,9 +167,9 @@ def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, 
 
     cur = conn.cursor()
 
-    query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber) VALUES (%s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber))
+        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber, 0))   #default is hasn't paid
         conn.commit()
         print("Inserted reservation successfully")
     except mysql.connector.Error as e:
@@ -225,6 +224,22 @@ def insertEmployee(id, email, password, name, salary):
         cur.execute(query, (id, email, password, name, salary))
         conn.commit()
         print("Inserted employee successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+
+
+def insertAssigned(id, date, number):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "INSERT INTO Assigned (employeeId, Date, trainNumber) VALUES (%s, %s, %s)"
+
+    try:
+        cur.execute(query, (id, date, number))
+        conn.commit()
+        print("Inserted assigned successfully")
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()

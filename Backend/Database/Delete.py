@@ -1,5 +1,5 @@
 import mysql.connector
-import Connect
+from . import Connect
 
 
 def deleteTrain(number):
@@ -289,6 +289,34 @@ def deleteWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
             return True
         else:
             print(f"No waitlist entry found with the given parameters.")
+            return False
+
+    except mysql.connector.Error as e:
+        print(f"Error deleting data: {e}")
+        conn.rollback()
+        return False
+
+    finally:
+        cur.close()
+
+
+def deleteAssigned(id, date):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = """
+    DELETE FROM assigned
+    WHERE employeeID = %s AND Date = %s
+    """
+
+    try:
+        cur.execute(query, (id, date))
+        conn.commit()
+
+        if cur.rowcount > 0:
+            print(f"Deleted assigned entry for employeeID = {id}, Date = {date}.")
+            return True
+        else:
+            print(f"No assigned entry found with the given parameters.")
             return False
 
     except mysql.connector.Error as e:
