@@ -28,3 +28,4 @@ print("Hello World")
 # db.insertAdmin(1, "admin@admin", "password", "mo", 4000)
 from Database import Get as getDb
 # getDb.get
+getDb.getAllTrips("2021-05-01")

@@ -245,6 +245,29 @@ def getTripStop(number, date, time):
     finally:
         cur.close()
 
+def getAllTrainStopsForTrip(number, date):
+    conn = Connect.getConnection()  # Assuming getConnection() gives you the active connection
+    cur = conn.cursor()
+
+    query = "SELECT * FROM trip_stop WHERE TripNumber = %s AND Date = %s Order by Time"
+
+    try:
+        cur.execute(query, (number, date))
+        result = cur.fetchall()
+
+        if result:
+            print(f"Trip Stop details for TripNumber {number}, Date {date}: {result}")
+            return result
+        else:
+            print(f"No trip stop found for TripNumber {number}, Date {date}.")
+            return None
+
+    except mysql.connector.Error as e:
+        print(f"Error retrieving data: {e}")
+        return None
+
+    finally:
+        cur.close()
 
 def getReservation(passengerID, tripNumber, date, firstStation, lastStation):
     conn = Connect.getConnection()  # Assuming getConnection() gives you the active connection
@@ -422,3 +445,41 @@ def getPassengerByEmail(email):
 
     finally:
         cur.close()
+
+
+
+
+def getAllTrips(date):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "SELECT * FROM trip t JOIN trip_stop s ON t.TripNumber=s.TripNumber and t.Date = s.Date WHERE t.date >= %s order by t.Date, t.TripNumber, s.Time"
+    try:
+        cur.execute(query, (date,))
+        result = cur.fetchall()
+        if result:
+            # print(f"Trip details: {result}")
+            trainsList = []
+            trainDic = {}
+            # the result is originally a join of trip and trip_stop, I want to get a list of dictionary with trainNumber, date, time, list of station Names
+            for trip in result:
+                tripNumber, date, trainNumber, tripNumber2, date2, stationName, time = trip
+                if not (tripNumber, date) in trainDic:
+                    trainDic[(tripNumber, date)] = {"tripNumber": tripNumber,"trainNumber": trainNumber, "date": date, "stations": [stationName], "times": [time]}
+                else:
+                    trainDic[(tripNumber, date)]["stations"].append(stationName)
+                    trainDic[(tripNumber, date)]["times"].append(time)
+            return trainDic
+        else:
+            print(f"No trips found.")
+            return {}
+    except mysql.connector.Error as e:
+        print(f"Error fetching data: {e}")
+        return None
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return None
+    finally:
+        cur.close()
+        
+
+    

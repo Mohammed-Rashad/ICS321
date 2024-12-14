@@ -1,8 +1,13 @@
 from flask import Blueprint, jsonify, request
 from app.decorators import token_required, role_required
-from Database.Get import getPassenger, getReservation, getTripStop, getPassengerByEmail
-from Database.insert import insertWaitlist, insertReservation, insertPassenger
-from Database.ProcessFunctionality import searchForTrain, availableSeats, canAfford, pay, getAllReservations
+# from Database.Get import getPassenger, getReservation, getTripStop, getPassengerByEmail
+# from Database.insert import insertWaitlist, insertReservation, insertPassenger
+# from Database.ProcessFunctionality import searchForTrain, availableSeats, canAfford, pay, getAllReservations
+from Database import Get as getDb
+from Database import insert as insertDb
+from Database import ProcessFunctionality as processDb
+# from Database import Constants as Constants
+from Database import Delete as deleteDb
 # from Constants import TICKET_PRICE as TP
 TP = 47
 # Create a blueprint for passenger-related routes
@@ -17,7 +22,7 @@ def search_trains():
     finalStation = data.get('finalStation')
     date = data.get('date')
 
-    available_trains = searchForTrain(initialStation, finalStation, date)
+    available_trains = getDb.searchForTrain(initialStation, finalStation, date)
 
     return jsonify({"Available Trains":available_trains})
 # @bp.route('/book_seats', methods = ['POST'])
@@ -72,7 +77,7 @@ def complete_payment():
     date = data.get('date')
     stopOrder = data.get('stopOrder')
 
-    trip_data = getTripStop(tripNumber, date, stopOrder)#get the initial and final stations from the tripNumber
+    trip_data = getDb.getTripStop(tripNumber, date, stopOrder)#get the initial and final stations from the tripNumber
 
     firstStation = trip_data.get('firstStation')
     lastStation = trip_data.get('lastStation')
@@ -80,7 +85,7 @@ def complete_payment():
         tickets = {}  # Initialize an empty dictionary to hold all tickets
 
         # Iterate over all reservations for the passenger
-        for each in getAllReservations(passengerID):
+        for each in getDb.getAllReservations(passengerID):
             tripNumber = each.get('TripNumber')  # Get the trip number from the reservation
             seatNumber = each.get('SeatNumber')  # Get the seat number from the reservation
             tickets[tripNumber] = seatNumber  # Add the trip number and seat number to the dictionary
@@ -121,12 +126,12 @@ def sign_up():
             return jsonify({"error": "Passenger already exists"}), 400
         
         # check email is not used
-        passengerWithEmail = getPassengerByEmail(email)
+        passengerWithEmail = getDb.getPassengerByEmail(email)
         if passengerWithEmail:
             return jsonify({"error": "Email already exists"}), 400
 
         # insert passenger into database
-        insertPassenger(name, 0,  password, email, phone)
+        getDb.insertPassenger(name, 0,  password, email, phone)
         return jsonify({"message": "Passenger created successfully"}), 201
     
     except Exception as e:

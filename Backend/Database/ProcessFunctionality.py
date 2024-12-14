@@ -48,10 +48,10 @@ def availableSeats(tripNumber, date, initialStation, finalStation):     #use ini
     query = """     
     SELECT SeatNumber
     FROM reservation
-    WHERE TripNumber = '%s'
+    WHERE TripNumber = %s
     AND Date = %s
-    AND LastStation > '%s'
-    AND FirstStation < '%s'
+    AND LastStation > %s
+    AND FirstStation < %s
     """     #All taken seat numbers
 
     try:
@@ -65,8 +65,8 @@ def availableSeats(tripNumber, date, initialStation, finalStation):     #use ini
         FROM train
         JOIN trip
         ON train.TrainNumber = trip.TrainNumber
-        WHERE trip.TripNumber = '%s'
-        AND trip.Date = '%s'
+        WHERE trip.TripNumber = %s
+        AND trip.Date = %s
         """
 
         cursor.execute(query, (tripNumber, date))

@@ -131,7 +131,6 @@ def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, 
     conn = Connect.getConnection()
 
     cur = conn.cursor()
-
     query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     try:
         cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber, 0))   #default is hasn't paid
