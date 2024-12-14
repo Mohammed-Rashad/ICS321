@@ -487,5 +487,20 @@ def getAllTravellingDependents(date):
 
     try:
         query = """
-        SELECT 
+        SELECT dependent.id
+        FROM dependent
+        JOIN reservation
+        ON reservation.PassengerID = dependent.ID
+        WHERE Date = '%s'
         """
+
+        cursor.execute(query)
+        dependents = cursor.fetchall()
+        return [i[0] for i in dependents]
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for dependents: {err}")
+        return None
+
+    finally:
+        cursor.close()
