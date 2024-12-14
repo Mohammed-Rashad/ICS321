@@ -119,26 +119,45 @@ def insertTrip(tripNumber, date, trainNumber):
         cur.close()
 
 
-
-def insertTripStop(tripNumber, date, stopOrder, stationName):     # Seats available is set to number of seats by default
+def insertTripStop(tripNumber, date, time, stationName):
     conn = Connect.getConnection()
-
     cur = conn.cursor()
 
-    # Query to insert data into trip_stop table
-    query = """
-        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName) 
-        VALUES (%s, %s, %s, %s)
-    """
-
     try:
-        # Proceed with the insertion
-        cur.execute(query, (tripNumber, date, stopOrder, stationName, ))
+        # Get the current stop order based on time
+        query = """
+        SELECT COUNT(*)
+        FROM trip_stop
+        WHERE TripNumber = %s
+        AND Date = %s
+        AND Time < %s
+        """
+        cur.execute(query, (tripNumber, date, time))
+        stopOrder = cur.fetchone()[0] + 1  # +1 to place it after existing earlier stops
+
+        # Shift all future stops forward
+        query = """
+        UPDATE trip_stop
+        SET StopOrder = StopOrder + 1
+        WHERE TripNumber = %s
+        AND Date = %s
+        AND StopOrder >= %s
+        """
+        cur.execute(query, (tripNumber, date, stopOrder))
+
+        # Insert the new stop
+        query = """
+        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName, Time) 
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cur.execute(query, (tripNumber, date, stopOrder, stationName, time))
         conn.commit()
         print("Inserted trip stop successfully")
+
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+
     finally:
         cur.close()
 
