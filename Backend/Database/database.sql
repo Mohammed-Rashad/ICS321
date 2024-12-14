@@ -18,15 +18,6 @@
 --
 -- Table structure for table `admin`
 --
-DROP TABLE IF EXISTS person;
-CREATE TABLE Person(
-	id INT NOT NULL,
-    primary key (id)
-);
-
---
--- Table structure for table `admin`
---
 
 DROP TABLE IF EXISTS `admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -48,6 +39,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+INSERT INTO `admin` VALUES (1122334455,'eng.mrwanm@gmail.com','password1','Marwan',999999.00);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,8 +55,9 @@ CREATE TABLE `assigned` (
   `date` date NOT NULL,
   `trainNumber` int NOT NULL,
   PRIMARY KEY (`employeeID`,`date`),
-  FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`),
-  FOREIGN KEY (`trainNumber`) REFERENCES `train` (`TrainNumber`)
+  KEY `trainNumber` (`trainNumber`),
+  CONSTRAINT `assigned_ibfk_1` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`),
+  CONSTRAINT `assigned_ibfk_2` FOREIGN KEY (`trainNumber`) REFERENCES `train` (`TrainNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -89,8 +82,9 @@ CREATE TABLE `dependent` (
   `Name` varchar(15) NOT NULL,
   `GuardianID` int NOT NULL,
   PRIMARY KEY (`ID`),
-  FOREIGN KEY (`GuardianID`) REFERENCES `passenger` (`ID`),
-  FOREIGN KEY (ID) REFERENCES PERSON(id)
+  KEY `GuardianID` (`GuardianID`),
+  CONSTRAINT `dependent_ibfk_1` FOREIGN KEY (`GuardianID`) REFERENCES `passenger` (`ID`),
+  CONSTRAINT `dependent_ibfk_2` FOREIGN KEY (`ID`) REFERENCES `person` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,6 +94,7 @@ CREATE TABLE `dependent` (
 
 LOCK TABLES `dependent` WRITE;
 /*!40000 ALTER TABLE `dependent` DISABLE KEYS */;
+INSERT INTO `dependent` VALUES (101,'Suhail',1111100000),(102,'Aziz',1110000000),(103,'Jamal',1110000000),(104,'Trevok',1110000000),(105,'Takashi',1100000000);
 /*!40000 ALTER TABLE `dependent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,6 +122,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
+INSERT INTO `employee` VALUES (202246240,'202246240@kfupm.edu.sa','password1','Jaddoua',20000.00),(202252120,'202252120@kfupm.edu.sa','password1','Rashad',19999.99);
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +142,7 @@ CREATE TABLE `passenger` (
   `phone` varchar(14) NOT NULL,
   `isLoyalty` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
-  FOREIGN KEY (ID) REFERENCES PERSON(id)
+  CONSTRAINT `passenger_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `person` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -156,7 +152,31 @@ CREATE TABLE `passenger` (
 
 LOCK TABLES `passenger` WRITE;
 /*!40000 ALTER TABLE `passenger` DISABLE KEYS */;
+INSERT INTO `passenger` VALUES (1000000000,'Mohammed',60,'password1','b@gmail.com','0550001234',1),(1100000000,'Husam',0,'password1','c@gmail.com','0555000000',0),(1110000000,'Ammar',300,'password1','d@gmail.com','0555500000',1),(1111000000,'Ali',40,'password1','e@gmail.com','0555550000',0),(1111100000,'Ziad',60,'password1','f@gmail.com','0555555000',0),(1111110000,'Bassam',150,'password1','g@gmail.com','0555555500',1),(1111111000,'Yousef',90,'password1','h@gmail.com','0555555550',0),(1234567890,'Ahmed',100,'password1','a@gmail.com','0505550000',0);
 /*!40000 ALTER TABLE `passenger` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `person`
+--
+
+DROP TABLE IF EXISTS `person`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `person` (
+  `id` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `person`
+--
+
+LOCK TABLES `person` WRITE;
+/*!40000 ALTER TABLE `person` DISABLE KEYS */;
+INSERT INTO `person` VALUES (101),(102),(103),(104),(105),(1000000000),(1100000000),(1110000000),(1111000000),(1111100000),(1111110000),(1111111000),(1234567890);
+/*!40000 ALTER TABLE `person` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -175,9 +195,11 @@ CREATE TABLE `reservation` (
   `SeatNumber` int NOT NULL,
   `hasPaid` tinyint(1) NOT NULL,
   PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
-  FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  FOREIGN KEY (`PassengerID`) REFERENCES `person` (`ID`)
+  KEY `TripNumber` (`TripNumber`,`Date`,`firstStation`),
+  KEY `TripNumber_2` (`TripNumber`,`Date`,`lastStation`),
+  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  CONSTRAINT `reservation_ibfk_3` FOREIGN KEY (`PassengerID`) REFERENCES `person` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -210,7 +232,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES ('KFUPM','Dharan');
+INSERT INTO `station` VALUES ('Aramco','Dammam'),('Central Station','Riyadh'),('Haram','Makkah'),('JED Airport','Jeddah'),('KFUPM','Dharan'),('Mountain','Abha'),('Port','Jeddah'),('School','Makkah'),('Tala Mall','Riyadh'),('Tower','Riyadh');
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,6 +257,7 @@ CREATE TABLE `train` (
 
 LOCK TABLES `train` WRITE;
 /*!40000 ALTER TABLE `train` DISABLE KEYS */;
+INSERT INTO `train` VALUES (1,30,10),(2,25,15),(3,30,20),(4,50,30),(5,60,25);
 /*!40000 ALTER TABLE `train` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,7 +273,8 @@ CREATE TABLE `trip` (
   `Date` date NOT NULL,
   `TrainNumber` int NOT NULL,
   PRIMARY KEY (`TripNumber`,`Date`),
-  FOREIGN KEY (`TrainNumber`) REFERENCES `train` (`TrainNumber`)
+  KEY `TrainNumber` (`TrainNumber`),
+  CONSTRAINT `trip_ibfk_1` FOREIGN KEY (`TrainNumber`) REFERENCES `train` (`TrainNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -276,8 +300,9 @@ CREATE TABLE `trip_stop` (
   `StationName` varchar(15) NOT NULL,
   `Time` time NOT NULL,
   PRIMARY KEY (`TripNumber`,`Date`,`Time`),
-  FOREIGN KEY (`TripNumber`, `Date`) REFERENCES `trip` (`TripNumber`, `Date`),
-  FOREIGN KEY (`StationName`) REFERENCES `station` (`Name`)
+  KEY `StationName` (`StationName`),
+  CONSTRAINT `trip_stop_ibfk_1` FOREIGN KEY (`TripNumber`, `Date`) REFERENCES `trip` (`TripNumber`, `Date`),
+  CONSTRAINT `trip_stop_ibfk_2` FOREIGN KEY (`StationName`) REFERENCES `station` (`Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -304,9 +329,11 @@ CREATE TABLE `waitlist` (
   `firstStation` time NOT NULL,
   `lastStation` time NOT NULL,
   PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
-  FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  FOREIGN KEY (`PassengerID`) REFERENCES `person` (`ID`),
-  FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`)
+  KEY `TripNumber` (`TripNumber`,`Date`,`firstStation`),
+  KEY `TripNumber_2` (`TripNumber`,`Date`,`lastStation`),
+  CONSTRAINT `waitlist_ibfk_1` FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  CONSTRAINT `waitlist_ibfk_2` FOREIGN KEY (`PassengerID`) REFERENCES `person` (`id`),
+  CONSTRAINT `waitlist_ibfk_3` FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -328,4 +355,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-14 16:52:16
+-- Dump completed on 2024-12-14 20:30:49
