@@ -1,5 +1,5 @@
 from . import Connect
-from . import Insert
+from . import insert
 from . import Delete
 from . import Get
 import mysql.connector

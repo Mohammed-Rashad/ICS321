@@ -202,8 +202,8 @@ def addAdmin(email, password, name, salary):
         conn = Connect.getConnection()  # Assuming this function provides a valid DB connection
         cur = conn.cursor()
         query = "INSERT INTO admin (email, password, Name, Salary) VALUES (%s, %s, %s, %s)"
-        hashed_password = generate_password_hash(password)  # Hash the password before storing
-        cur.execute(query, (email, hashed_password, name, salary))
+        # hashed_password = generate_password_hash(password)  # Hash the password before storing
+        cur.execute(query, (email, password, name, salary))
         conn.commit()
         return True  # Admin user added successfully
 

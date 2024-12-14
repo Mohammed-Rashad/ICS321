@@ -8,14 +8,11 @@ import { useNavigate } from 'react-router-dom';
 // Mock data (in a real app, this would come from an API)
 const initialTrains = [
   { 
-    name: 'Express Mumbai', 
-    stations: ['Mumbai Central', 'Pune', 'Bangalore'], 
-    maxPassengers: 100,
-  },
-  { 
-    name: 'Riyadh', 
-    stations: ['Mumbai Central', 'Pune', 'Bangalore'], 
-    maxPassengers: 100,
+    name: 'Najran', 
+    stations: ['Najran', 'Abha', 'Mecca'], 
+    maxPassengers: '34',
+    cost: '32',
+    id: 1
   }
 ];
 
@@ -77,9 +74,11 @@ const fetchTrains = async () => {
       console.log('Trains:', trainsList);
       for (let i = 0; i < trainsList.length; i++) {
         const train = {
-          name: trainsList[i].train_name,
-          stations: trainsList[i].stations,
-          maxPassengers: trainsList[i].max_passengers
+          name: "Train "  + trainsList[i].trainNumber,
+          stations: ["av", "av"],
+          maxPassengers: trainsList[i].maxPassengers,
+          cost: trainsList[i].cost,
+          id: trainsList[i].trainNumber
         };
         initialTrains.push(train);
       }
@@ -117,7 +116,9 @@ const RailwayDashboard = () => {
   const [newTrainForm, setNewTrainForm] = useState({
     name: '',
     stations: '',
-    maxPassengers: ''
+    maxPassengers: '',
+    cost: '',
+    id: ''
   });
   // Previous methods remain the same...
   
@@ -168,7 +169,9 @@ const RailwayDashboard = () => {
       const trainData = {
         name: newTrainForm.name,
         stations: newTrainForm.stations.split(',').map(station => station.trim()),
-        max_passengers: parseInt(newTrainForm.maxPassengers)
+        max_passengers: parseInt(newTrainForm.maxPassengers),
+        cost: parseFloat(newTrainForm.cost),
+        id: parseInt(newTrainForm.id)
       };
 
       // Send POST request to Flask backend
@@ -188,7 +191,9 @@ const RailwayDashboard = () => {
         const newTrain = {
           name: trainData.name,
           stations: trainData.stations,
-          maxPassengers: trainData.max_passengers,
+          maxPassengers: trainData.max_passengers.toString(),
+          cost: trainData.cost.toString(),
+          id: trainData.id
         };
 
         setTrains([...trains, newTrain]);
@@ -198,7 +203,9 @@ const RailwayDashboard = () => {
         setNewTrainForm({
           name: '',
           stations: '',
-          maxPassengers: ''
+          maxPassengers: '',
+          cost: '',
+          id: ''
         });
       }
     } catch (error) {
@@ -437,6 +444,7 @@ const RailwayDashboard = () => {
             <th className="p-3 text-left">Train Name</th>
             <th className="p-3 text-left">Stations</th>
             <th className="p-3 text-left">Max Capacity</th>
+            <th className="p-3 text-left">Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -445,6 +453,7 @@ const RailwayDashboard = () => {
               <td className="p-3">{train.name}</td>
               <td className="p-3">{train.stations.join(', ')}</td>
               <td className='p-3'>{train.maxPassengers}</td>
+              <td className='p-3'>S.R {train.cost}</td>
             </tr>
           ))}
         </tbody>
@@ -477,6 +486,22 @@ const RailwayDashboard = () => {
                 required
                 value={newTrainForm.maxPassengers}
                 onChange={(e) => setNewTrainForm({...newTrainForm, maxPassengers: e.target.value})}
+                className="w-full border p-2 mb-2 rounded"
+              />
+              <input 
+                type="number" 
+                placeholder="cost" 
+                required
+                value={newTrainForm.cost}
+                onChange={(e) => setNewTrainForm({...newTrainForm, cost: e.target.value})}
+                className="w-full border p-2 mb-2 rounded"
+              />
+              <input 
+                type="number" 
+                placeholder="id" 
+                required
+                value={newTrainForm.id}
+                onChange={(e) => setNewTrainForm({...newTrainForm, id: e.target.value})}
                 className="w-full border p-2 mb-2 rounded"
               />
               <div className="flex justify-end space-x-2">

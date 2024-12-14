@@ -1,8 +1,11 @@
 from flask import Blueprint, jsonify, request
 from app.decorators import token_required, role_required
-from Database.insert import insertTrip, insertTripStop
-from Database.Delete import deleteTrip, deleteTripStop
-from Database.Get import getTrip, getTripStop
+from Database import insert as db
+from Database import Get as getDb
+from Database import Delete as deleteDb
+# from Database.insert import insertTrip, insertTripStop
+# from Database.Delete import deleteTrip, deleteTripStop
+# from Database.Get import getTrip, getTripStop
 bp = Blueprint('trip', __name__, url_prefix='/trip')
 
 ##insert get delete functions for trip
@@ -15,7 +18,7 @@ def insert_trip():
     date = data.get('date')
     trainNumber = data.get('trainNumber')
    
-    insertTrip(tripNumber, date, trainNumber)
+    db.insertTrip(tripNumber, date, trainNumber)
 
     return jsonify({"Trip": "Inserted Successfully"})
 
@@ -28,7 +31,7 @@ def get_trip():
     tripNumber = data.get('tripNumber')
     date = data.get('date')
    
-    trip = getTrip(tripNumber, date)
+    trip = getDb.getTrip(tripNumber, date)
 
     return jsonify({"Trip": trip})
 
@@ -40,7 +43,7 @@ def delete_trip():
     tripNumber = data.get('tripNumber')
     date = data.get('date')
    
-    deleteTrip(tripNumber, date)
+    deleteDb.deleteTrip(tripNumber, date)
 
     return jsonify({"Trip": "Deleted Successfully"})
 
@@ -56,7 +59,7 @@ def insert_tripStop():
     stopOrder = data.get('stopOrder')
     stationName = data.get('stationName')
 
-    insertTripStop(tripNumber, date, stopOrder, stationName)
+    db.insertTripStop(tripNumber, date, stopOrder, stationName)
 
     return jsonify({"TripStop": "Inserted Successfully"})
 
@@ -70,7 +73,7 @@ def get_tripStop():
     date = data.get('date')
     stopOrder = data.get('stopOrder')
     
-    tripStop = getTripStop(tripNumber, date, stopOrder)
+    tripStop = getDb.getTripStop(tripNumber, date, stopOrder)
 
     return jsonify({"TripStop": tripStop})
 
@@ -82,7 +85,7 @@ def delete_tripStop():
     tripNumber = data.get('tripNumber')
     date = data.get('date')
     stopOrder = data.get('stopOrder')
-    deleteTripStop(tripNumber, date, stopOrder)
+    deleteDb.deleteTripStop(tripNumber, date, stopOrder)
 
     return jsonify({"TripStop": "Deleted Successfully"})
 

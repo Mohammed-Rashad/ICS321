@@ -3,8 +3,8 @@ from app.decorators import token_required, role_required
 from Database.Get import getPassenger, getReservation, getTripStop
 from Database.insert import insertWaitlist, insertReservation
 from Database.ProcessFunctionality import searchForTrain, availableSeats, canAfford, pay, getAllReservations
-from Constants import TICKET_PRICE as TP
-
+# from Constants import TICKET_PRICE as TP
+TP = 47
 # Create a blueprint for passenger-related routes
 bp = Blueprint('passenger', __name__, url_prefix='/passenger')
 

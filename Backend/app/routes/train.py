@@ -9,11 +9,10 @@ bp = Blueprint('train', __name__, url_prefix='/train')
 
 
 # @token_required
-@role_required('admin')
 def insert_train():
     data = request.json
     name = data.get('name')
-    number = data.get('number')
+    number = data.get('id')
     # list of stations
     stations = data.get('stations')
     # generate random 32bit number randomly 
@@ -21,7 +20,8 @@ def insert_train():
     max_passengers = data.get('max_passengers')
     print("hi")    
     cost = data.get('cost')
-
+    print(data)
+    print(number, max_passengers,cost)
     insertTrain(number, max_passengers,cost)
 
     return jsonify({"Train": "Inserted Successfully"})
@@ -57,8 +57,9 @@ def all():
         return jsonify({"Trains": []})
     trainsList = []
     for train in trains:
-        trainNumber, maxPassengers = train
-        trainsList.append({"trainNumber": trainNumber, "maxPassengers": maxPassengers})
+        print(train)
+        trainNumber, maxPassengers, cost = train
+        trainsList.append({"trainNumber": trainNumber, "maxPassengers": maxPassengers, "cost": cost})
         
     return jsonify({"Trains": trainsList}) 
 
