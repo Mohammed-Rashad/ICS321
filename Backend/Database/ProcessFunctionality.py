@@ -1,7 +1,7 @@
 from . import Connect
-import Insert
-import Delete
-import Get
+from . import Insert
+from . import Delete
+from . import Get
 import mysql.connector
 
 
@@ -141,31 +141,69 @@ def canAfford(idList, trainNumber):
 
 
 #createReservation already exists in 'Insert.py'
+#createWaitlist also exists in 'Insert.py'
 
 #Complete payment
 
-#pay for a passenger to board a train
-def pay(trainNumber, id):
+#pay for a reservation
+#Note: returns true if paid successfully or if already paid before
+def pay(passengerID, tripNumber, date, firstStation, lastStation):
     conn = Connect.getConnection()
     cursor = conn.cursor()
 
     query = """
     SELECT cost
     FROM train
-    WHERE TrainNumber = '%s'
+    JOIN trip
+    ON train.TrainNumber = trip.TrainNumber
+    WHERE TripNumber = '%s'
+    and Date = '%s'
     """
 
     try:
-        cursor.execute(query, (trainNumber,))
+        cursor.execute(query, (tripNumber, date))
         cost = cursor.fetchall()[0][0]
+
+        query = """
+        SELECT hasPaid
+        FROM reservation
+        WHERE PassengerID = '%s'
+        AND TripNumber = '%s'
+        AND Date = '%s'
+        AND FirstStation = '%s'
+        AND LastStation = '%s'
+        """
+
+        cursor.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        hasPaid = cursor.fetchall()[0][0]
+
+        if hasPaid:
+            return True
+
+        if not canAfford([passengerID], tripNumber):
+            return False
 
         query = """
         UPDATE Passenger
         SET Balance = Balance - '%s'
         WHERE ID = '%s'
         """
+
         cursor.execute(query, (cost, id))
+
+        query = """
+        UPDATE reservation
+        SET hasPaid = 1
+        WHERE PassengerID = '%s'
+        AND TripNumber = '%s'
+        AND Date = '%s'
+        AND FirstStation = '%s'
+        AND LastStation = '%s'
+        """
+
+        cursor.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
         conn.commit()
+
         return True
     except mysql.connector.Error as err:
         print(f"Error while paying: {err}")
@@ -173,3 +211,128 @@ def pay(trainNumber, id):
         return False
     finally:
         cursor.close()
+
+
+#Functions of Staff/Admin
+
+#Add/Edit/Cancel reservation/ticket
+#Add and cancel already exist
+#For edit just remove and add again (don't forget to check the valid seat numbers for the adjusted trip and the cost and everything)
+#You will probably need this
+#Search for all reservations of a given id
+def getAllReservations(passengerId):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+    query = """
+    SELECT *
+    FROM reservation
+    WHERE PassengerID = '%s'
+    """
+
+    try:
+        cursor.execute(query, (passengerId,))
+        reservations = cursor.fetchall()
+        return reservations
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for reservations: {err}")
+        return None
+
+    finally:
+        cursor.close()
+
+#Assign staff to a train for a given date
+#(insert/delete/get)Assigned were added
+
+#Promote a waitlisted passenger
+#You can just removeWaitlist(...) and insertReservation(...)
+#You will also probably need this
+#Search for all waitlistings of a given id
+def getAllWaitlists(passengerId):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+    query = """
+    SELECT *
+    FROM waitlist
+    WHERE PassengerID = '%s'
+    """
+
+    try:
+        cursor.execute(query, (passengerId,))
+        waitlists = cursor.fetchall()
+        return waitlists
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for waitlists: {err}")
+        return None
+
+    finally:
+        cursor.close()
+
+
+#Functions of System
+
+#Send email reminders to passengers who did not pay
+
+#Get id of all passengers travelling a certain day who haven't paid yet
+def getHaventPaid(date):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT PassengerID
+    FROM reservation
+    WHERE Date = '%s'
+    AND HasPaid = 0
+    """
+
+    try:
+        cursor.execute(query, (date,))
+        reservations = cursor.fetchall()
+        return [i[0] for i in reservations]
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for reservations who haven't paid: {err}")
+        return None
+
+    finally:
+        cursor.close()
+
+
+#Using a trigger send a message to a passenger 3 hours before the departure of his train
+
+#This is what I can do I guess
+#Get id of all passengers leaving from a certain station at a certain trip on a certain day
+def getStationPassengers(tripNumber, date, stationName):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT PassengerID
+    FROM reservation
+    JOIN trip_stop
+    ON reservation.TripNumber = trip_stop.TripNumber
+    AND reservation.Date = trip_stop.Date
+    AND reservation.FirstStation = trip_stop.StopOrder
+    WHERE reservation.TripNumber = '%s'
+    AND reservation.Date = '%s'
+    AND trip_stop.StationName = '%s'
+    """
+
+    try:
+        cursor.execute(query, (stationName, date))
+        reservations = cursor.fetchall()
+        return [i[0] for i in reservations]
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for reservations leaving from a station: {err}")
+
+#General Function
+
+#Login and logout
+#getPassenger, getEmployee, getAdmin is all you need from me :)
+
+
+#Generate Reports
+
+#Current active trains that are on their way today

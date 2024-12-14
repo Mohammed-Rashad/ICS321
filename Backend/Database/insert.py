@@ -2,18 +2,18 @@ import mysql.connector
 from . import Connect
 
 # The database connection is the first argument of every function in this file
-from werkzeug.security import generate_password_hash
-def insertTrain(number, maxPassengers):
+
+def insertTrain(number, maxPassengers, cost):
     conn = Connect.getConnection()
     cur = conn.cursor()
-    query = "INSERT INTO train (trainNumber,maxPassenger) VALUES (%s,%s)"
+    query = "INSERT INTO train (trainNumber, maxPassenger, cost) VALUES (%s,%s,%s)"
 
     # Input validation
     if maxPassengers <= 0:
         raise ValueError("MaxPassengers cannot be less than or equal to zero")
 
     try:
-        cur.execute(query, (number, maxPassengers))
+        cur.execute(query, (number, maxPassengers, cost))
         conn.commit()
         cur.close()
 
@@ -119,44 +119,45 @@ def insertTrip(tripNumber, date, trainNumber):
         cur.close()
 
 
-
-def insertTripStop(tripNumber, date, stopOrder, stationName):     # Seats available is set to number of seats by default
+def insertTripStop(tripNumber, date, time, stationName):
     conn = Connect.getConnection()
-
     cur = conn.cursor()
 
-    # Query to get MaxPassenger from the train table
-    get_max_passenger_query = """
-        SELECT t.MaxPassenger
-        FROM train t
-        JOIN trip tr ON t.TrainNumber = tr.TrainNumber
-        WHERE tr.TripNumber = %s AND tr.Date = %s
-    """
-
-    # Query to insert data into trip_stop table
-    insert_query = """
-        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName, SeatsAvailable) 
-        VALUES (%s, %s, %s, %s, %s)
-    """
-
     try:
-        # Fetch MaxPassenger
-        cur.execute(get_max_passenger_query, (tripNumber, date))
-        result = cur.fetchone()
+        # Get the current stop order based on time
+        query = """
+        SELECT COUNT(*)
+        FROM trip_stop
+        WHERE TripNumber = %s
+        AND Date = %s
+        AND Time < %s
+        """
+        cur.execute(query, (tripNumber, date, time))
+        stopOrder = cur.fetchone()[0] + 1  # +1 to place it after existing earlier stops
 
-        if not result:
-            cur.close()
-            raise ValueError(f"No matching trip found for TripNumber {tripNumber} on Date {date}")
+        # Shift all future stops forward
+        query = """
+        UPDATE trip_stop
+        SET StopOrder = StopOrder + 1
+        WHERE TripNumber = %s
+        AND Date = %s
+        AND StopOrder >= %s
+        """
+        cur.execute(query, (tripNumber, date, stopOrder))
 
-        max_passengers = result[0]
-
-        # Proceed with the insertion
-        cur.execute(insert_query, (tripNumber, date, stopOrder, stationName, max_passengers))
+        # Insert the new stop
+        query = """
+        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName, Time) 
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cur.execute(query, (tripNumber, date, stopOrder, stationName, time))
         conn.commit()
         print("Inserted trip stop successfully")
+
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+
     finally:
         cur.close()
 
@@ -167,9 +168,9 @@ def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, 
 
     cur = conn.cursor()
 
-    query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber) VALUES (%s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber))
+        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber, 0))   #default is hasn't paid
         conn.commit()
         print("Inserted reservation successfully")
     except mysql.connector.Error as e:
@@ -231,6 +232,21 @@ def insertEmployee(id, email, password, name, salary):
     finally:
         cur.close()
 
+
+def insertAssigned(id, date, number):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "INSERT INTO Assigned (employeeId, Date, trainNumber) VALUES (%s, %s, %s)"
+
+    try:
+        cur.execute(query, (id, date, number))
+        conn.commit()
+        print("Inserted assigned successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
 
 def addAdmin(email, password, name, salary):
     try:

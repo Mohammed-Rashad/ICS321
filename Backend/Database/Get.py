@@ -398,4 +398,3 @@ def getPassengerByEmail(email):
 
     finally:
         cur.close()
-        
