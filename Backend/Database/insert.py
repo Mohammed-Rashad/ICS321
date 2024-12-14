@@ -37,6 +37,13 @@ def insertPassenger(name, balance, password, email, phone):
 
     try:
         cur.execute(query, (id, name, balance, password, email, phone, 0))
+
+        query = """
+                INSERT INTO person (ID) VALUES (%s)
+                """
+
+        cur.execute(query, (id,))
+
         conn.commit()
         print("Inserted passenger successfully")
     except mysql.connector.Error as e:
@@ -63,6 +70,13 @@ def insertDependent(id, name, guardianID):
 
     try:
         cur.execute(query, (id, name, guardianID))
+
+        query = """
+        INSERT INTO person (ID) VALUES (%s)
+        """
+
+        cur.execute(query, (id,))
+
         conn.commit()
         print("Inserted dependent successfully")
     except mysql.connector.Error as e:

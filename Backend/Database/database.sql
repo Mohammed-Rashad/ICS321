@@ -18,6 +18,15 @@
 --
 -- Table structure for table `admin`
 --
+DROP TABLE IF EXISTS person;
+CREATE TABLE Person(
+	id INT NOT NULL,
+    primary key (id)
+);
+
+--
+-- Table structure for table `admin`
+--
 
 DROP TABLE IF EXISTS `admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -54,9 +63,8 @@ CREATE TABLE `assigned` (
   `date` date NOT NULL,
   `trainNumber` int NOT NULL,
   PRIMARY KEY (`employeeID`,`date`),
-  KEY `trainNumber` (`trainNumber`),
-  CONSTRAINT `assigned_ibfk_1` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`),
-  CONSTRAINT `assigned_ibfk_2` FOREIGN KEY (`trainNumber`) REFERENCES `train` (`TrainNumber`)
+  FOREIGN KEY (`employeeID`) REFERENCES `employee` (`id`),
+  FOREIGN KEY (`trainNumber`) REFERENCES `train` (`TrainNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -81,8 +89,8 @@ CREATE TABLE `dependent` (
   `Name` varchar(15) NOT NULL,
   `GuardianID` int NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `GuardianID` (`GuardianID`),
-  CONSTRAINT `dependent_ibfk_1` FOREIGN KEY (`GuardianID`) REFERENCES `passenger` (`ID`)
+  FOREIGN KEY (`GuardianID`) REFERENCES `passenger` (`ID`),
+  FOREIGN KEY (ID) REFERENCES PERSON(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -137,7 +145,8 @@ CREATE TABLE `passenger` (
   `email` varchar(30) NOT NULL,
   `phone` varchar(14) NOT NULL,
   `isLoyalty` tinyint(1) NOT NULL,
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (ID) REFERENCES PERSON(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -166,11 +175,9 @@ CREATE TABLE `reservation` (
   `SeatNumber` int NOT NULL,
   `hasPaid` tinyint(1) NOT NULL,
   PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
-  KEY `TripNumber` (`TripNumber`,`Date`,`firstStation`),
-  KEY `TripNumber_2` (`TripNumber`,`Date`,`lastStation`),
-  CONSTRAINT `first_stop` FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  CONSTRAINT `last_stop` FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`)
+  FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  FOREIGN KEY (`PassengerID`) REFERENCES `person` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -243,8 +250,7 @@ CREATE TABLE `trip` (
   `Date` date NOT NULL,
   `TrainNumber` int NOT NULL,
   PRIMARY KEY (`TripNumber`,`Date`),
-  KEY `TrainNumber` (`TrainNumber`),
-  CONSTRAINT `trip_ibfk_1` FOREIGN KEY (`TrainNumber`) REFERENCES `train` (`TrainNumber`)
+  FOREIGN KEY (`TrainNumber`) REFERENCES `train` (`TrainNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -270,9 +276,8 @@ CREATE TABLE `trip_stop` (
   `StationName` varchar(15) NOT NULL,
   `Time` time NOT NULL,
   PRIMARY KEY (`TripNumber`,`Date`,`Time`),
-  KEY `StationName` (`StationName`),
-  CONSTRAINT `trip_stop_ibfk_1` FOREIGN KEY (`TripNumber`, `Date`) REFERENCES `trip` (`TripNumber`, `Date`),
-  CONSTRAINT `trip_stop_ibfk_2` FOREIGN KEY (`StationName`) REFERENCES `station` (`Name`)
+  FOREIGN KEY (`TripNumber`, `Date`) REFERENCES `trip` (`TripNumber`, `Date`),
+  FOREIGN KEY (`StationName`) REFERENCES `station` (`Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -299,11 +304,9 @@ CREATE TABLE `waitlist` (
   `firstStation` time NOT NULL,
   `lastStation` time NOT NULL,
   PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
-  KEY `TripNumber` (`TripNumber`,`Date`,`firstStation`),
-  KEY `TripNumber_2` (`TripNumber`,`Date`,`lastStation`),
-  CONSTRAINT `waitlist_first_stop` FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  CONSTRAINT `waitlist_ibfk_1` FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`),
-  CONSTRAINT `waitlist_last_stop` FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`)
+  FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
+  FOREIGN KEY (`PassengerID`) REFERENCES `person` (`ID`),
+  FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

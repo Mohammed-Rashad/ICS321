@@ -99,10 +99,19 @@ def deletePassenger(id):
     try:
         # Execute the delete query
         cur.execute(query, (id,))
+
+        count = cur.rowcount
+
+        query = """
+                DELETE FROM person WHERE ID = %s
+                """
+
+        cur.execute(query, (id,))
+
         conn.commit()
 
         # Check if a row was deleted
-        if cur.rowcount > 0:
+        if count > 0:
             print(f"Deleted passenger with ID = {id}.")
             return True
         else:
@@ -157,10 +166,18 @@ def deleteDependent(id):
     try:
         # Execute the delete query
         cur.execute(query, (id,))
+        count = cur.rowcount
+
+        query = """
+                DELETE FROM person WHERE ID = %s
+                """
+
+        cur.execute(query, (id,))
+
         conn.commit()
 
         # Check if a row was deleted
-        if cur.rowcount > 0:
+        if count > 0:
             print(f"Deleted dependent with ID = {id}.")
             return True
         else:
