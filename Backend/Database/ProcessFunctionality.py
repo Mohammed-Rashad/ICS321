@@ -326,3 +326,13 @@ def getStationPassengers(tripNumber, date, stationName):
 
     except mysql.connector.Error as err:
         print(f"Error searching for reservations leaving from a station: {err}")
+
+#General Function
+
+#Login and logout
+#getPassenger, getEmployee, getAdmin is all you need from me :)
+
+
+#Generate Reports
+
+#Current active trains that are on their way today

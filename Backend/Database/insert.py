@@ -125,33 +125,15 @@ def insertTripStop(tripNumber, date, stopOrder, stationName):     # Seats availa
 
     cur = conn.cursor()
 
-    # Query to get MaxPassenger from the train table
-    get_max_passenger_query = """
-        SELECT t.MaxPassenger
-        FROM train t
-        JOIN trip tr ON t.TrainNumber = tr.TrainNumber
-        WHERE tr.TripNumber = %s AND tr.Date = %s
-    """
-
     # Query to insert data into trip_stop table
-    insert_query = """
-        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName, SeatsAvailable) 
-        VALUES (%s, %s, %s, %s, %s)
+    query = """
+        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName) 
+        VALUES (%s, %s, %s, %s)
     """
 
     try:
-        # Fetch MaxPassenger
-        cur.execute(get_max_passenger_query, (tripNumber, date))
-        result = cur.fetchone()
-
-        if not result:
-            cur.close()
-            raise ValueError(f"No matching trip found for TripNumber {tripNumber} on Date {date}")
-
-        max_passengers = result[0]
-
         # Proceed with the insertion
-        cur.execute(insert_query, (tripNumber, date, stopOrder, stationName, max_passengers))
+        cur.execute(query, (tripNumber, date, stopOrder, stationName, ))
         conn.commit()
         print("Inserted trip stop successfully")
     except mysql.connector.Error as e:
