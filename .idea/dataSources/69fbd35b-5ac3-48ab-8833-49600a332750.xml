@@ -1081,7 +1081,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </schema>
     <schema id="294" parent="1" name="train_management_system">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-12-14.12:24:32</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-12-14.13:22:16</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <user id="295" parent="1" name="engmr">
@@ -1364,13 +1364,13 @@ date</ColNames>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="355" parent="305" name="FirstStation">
-      <DasType>int|0s</DasType>
+    <column id="355" parent="305" name="firstStation">
+      <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="356" parent="305" name="LastStation">
-      <DasType>int|0s</DasType>
+    <column id="356" parent="305" name="lastStation">
+      <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
@@ -1389,43 +1389,43 @@ date</ColNames>
       <RefColNames>ID</RefColNames>
       <RefTableName>passenger</RefTableName>
     </foreign-key>
-    <foreign-key id="360" parent="305" name="reservation_ibfk_2">
+    <foreign-key id="360" parent="305" name="first_stop">
       <ColNames>TripNumber
 Date
-FirstStation</ColNames>
+firstStation</ColNames>
       <RefColNames>TripNumber
 Date
-StopOrder</RefColNames>
+Time</RefColNames>
       <RefTableName>trip_stop</RefTableName>
     </foreign-key>
-    <foreign-key id="361" parent="305" name="reservation_ibfk_3">
+    <foreign-key id="361" parent="305" name="last_stop">
       <ColNames>TripNumber
 Date
-LastStation</ColNames>
+lastStation</ColNames>
       <RefColNames>TripNumber
 Date
-StopOrder</RefColNames>
+Time</RefColNames>
       <RefTableName>trip_stop</RefTableName>
     </foreign-key>
     <index id="362" parent="305" name="PRIMARY">
       <ColNames>PassengerID
 TripNumber
 Date
-FirstStation
-LastStation</ColNames>
+firstStation
+lastStation</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
     <index id="363" parent="305" name="TripNumber">
       <ColNames>TripNumber
 Date
-FirstStation</ColNames>
+firstStation</ColNames>
       <Type>btree</Type>
     </index>
     <index id="364" parent="305" name="TripNumber_2">
       <ColNames>TripNumber
 Date
-LastStation</ColNames>
+lastStation</ColNames>
       <Type>btree</Type>
     </index>
     <key id="365" parent="305" name="PRIMARY">
@@ -1523,119 +1523,114 @@ Date</ColNames>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="384" parent="309" name="StopOrder">
-      <DasType>int|0s</DasType>
+    <column id="384" parent="309" name="StationName">
+      <DasType>varchar(15)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="385" parent="309" name="StationName">
-      <DasType>varchar(15)|0s</DasType>
+    <column id="385" parent="309" name="Time">
+      <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="386" parent="309" name="Time">
-      <DasType>time|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>5</Position>
-    </column>
-    <foreign-key id="387" parent="309" name="trip_stop_ibfk_1">
+    <foreign-key id="386" parent="309" name="trip_stop_ibfk_1">
       <ColNames>TripNumber
 Date</ColNames>
       <RefColNames>TripNumber
 Date</RefColNames>
       <RefTableName>trip</RefTableName>
     </foreign-key>
-    <foreign-key id="388" parent="309" name="trip_stop_ibfk_2">
+    <foreign-key id="387" parent="309" name="trip_stop_ibfk_2">
       <ColNames>StationName</ColNames>
       <RefColNames>Name</RefColNames>
       <RefTableName>station</RefTableName>
     </foreign-key>
-    <index id="389" parent="309" name="PRIMARY">
+    <index id="388" parent="309" name="PRIMARY">
       <ColNames>TripNumber
 Date
-StopOrder</ColNames>
+Time</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="390" parent="309" name="StationName">
+    <index id="389" parent="309" name="StationName">
       <ColNames>StationName</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="391" parent="309" name="PRIMARY">
+    <key id="390" parent="309" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="392" parent="310" name="PassengerID">
+    <column id="391" parent="310" name="PassengerID">
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="393" parent="310" name="TripNumber">
+    <column id="392" parent="310" name="TripNumber">
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="394" parent="310" name="Date">
+    <column id="393" parent="310" name="Date">
       <DasType>date|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="395" parent="310" name="FirstStation">
-      <DasType>int|0s</DasType>
+    <column id="394" parent="310" name="firstStation">
+      <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="396" parent="310" name="LastStation">
-      <DasType>int|0s</DasType>
+    <column id="395" parent="310" name="lastStation">
+      <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <foreign-key id="397" parent="310" name="waitlist_ibfk_1">
+    <foreign-key id="396" parent="310" name="waitlist_ibfk_1">
       <ColNames>PassengerID</ColNames>
       <RefColNames>ID</RefColNames>
       <RefTableName>passenger</RefTableName>
     </foreign-key>
-    <foreign-key id="398" parent="310" name="waitlist_ibfk_2">
+    <foreign-key id="397" parent="310" name="waitlist_first_stop">
       <ColNames>TripNumber
 Date
-FirstStation</ColNames>
+firstStation</ColNames>
       <RefColNames>TripNumber
 Date
-StopOrder</RefColNames>
+Time</RefColNames>
       <RefTableName>trip_stop</RefTableName>
     </foreign-key>
-    <foreign-key id="399" parent="310" name="waitlist_ibfk_3">
+    <foreign-key id="398" parent="310" name="waitlist_last_stop">
       <ColNames>TripNumber
 Date
-LastStation</ColNames>
+lastStation</ColNames>
       <RefColNames>TripNumber
 Date
-StopOrder</RefColNames>
+Time</RefColNames>
       <RefTableName>trip_stop</RefTableName>
     </foreign-key>
-    <index id="400" parent="310" name="PRIMARY">
+    <index id="399" parent="310" name="PRIMARY">
       <ColNames>PassengerID
 TripNumber
 Date
-FirstStation
-LastStation</ColNames>
+firstStation
+lastStation</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="401" parent="310" name="TripNumber">
+    <index id="400" parent="310" name="TripNumber">
       <ColNames>TripNumber
 Date
-FirstStation</ColNames>
+firstStation</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="402" parent="310" name="TripNumber_2">
+    <index id="401" parent="310" name="TripNumber_2">
       <ColNames>TripNumber
 Date
-LastStation</ColNames>
+lastStation</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="403" parent="310" name="PRIMARY">
+    <key id="402" parent="310" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

@@ -90,67 +90,17 @@ def insertStation(name, city):
         cur.close()
 
 
-def insertTrip(tripNumber, date, trainNumber):
-    conn = Connect.getConnection()
-
-    cur = conn.cursor()
-
-    check_train_query = "SELECT COUNT(*) FROM train WHERE TrainNumber = %s"
-    insert_query = "INSERT INTO trip (TripNumber, Date, TrainNumber) VALUES (%s, %s, %s)"
-
-    # Validate trainNumber exists
-    cur.execute(check_train_query, (trainNumber,))
-    train_exists = cur.fetchone()[0]
-
-    if train_exists == 0:
-        cur.close()
-        raise ValueError(f"TrainNumber {trainNumber} does not exist in the train table.")
-
-    try:
-
-        # Proceed with the insertion
-        cur.execute(insert_query, (tripNumber, date, trainNumber))
-        conn.commit()
-        print("Inserted trip successfully")
-    except mysql.connector.Error as e:
-        print(f"Error inserting data: {e}")
-        conn.rollback()
-    finally:
-        cur.close()
-
-
 def insertTripStop(tripNumber, date, time, stationName):
     conn = Connect.getConnection()
     cur = conn.cursor()
 
     try:
-        # Get the current stop order based on time
-        query = """
-        SELECT COUNT(*)
-        FROM trip_stop
-        WHERE TripNumber = %s
-        AND Date = %s
-        AND Time < %s
-        """
-        cur.execute(query, (tripNumber, date, time))
-        stopOrder = cur.fetchone()[0] + 1  # +1 to place it after existing earlier stops
-
-        # Shift all future stops forward
-        query = """
-        UPDATE trip_stop
-        SET StopOrder = StopOrder + 1
-        WHERE TripNumber = %s
-        AND Date = %s
-        AND StopOrder >= %s
-        """
-        cur.execute(query, (tripNumber, date, stopOrder))
-
         # Insert the new stop
         query = """
-        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName, Time) 
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO trip_stop (TripNumber, Date, Time, StationName) 
+        VALUES (%s, %s, %s, %s)
         """
-        cur.execute(query, (tripNumber, date, stopOrder, stationName, time))
+        cur.execute(query, (tripNumber, date, time, stationName))
         conn.commit()
         print("Inserted trip stop successfully")
 
