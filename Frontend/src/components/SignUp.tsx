@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { User, Lock, Mail, IdCard } from 'lucide-react';
-
+import { User, Lock, Mail, IdCard, Phone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 const SignupForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    nationalId: ''
+    id: '',
+    phone: ''
   });
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -26,7 +27,7 @@ const SignupForm = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/signup', {
+      const response = await fetch('http://localhost:5000/passenger/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,8 +38,12 @@ const SignupForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Signup successful!');
+        // show success message that is not alert
+        
         // Reset form or redirect
+        // redirect to /login
+        console.log('Signup successful', data);
+        navigate('/login');
       } else {
         setError(data.message || 'Signup failed');
       }
@@ -105,22 +110,50 @@ const SignupForm = () => {
               className="pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
+          {/* <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Lock className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="id"
+              name="id"
+              placeholder="Password"
+              value={formData.id}
+              onChange={handleChange}
+              required
+              className="pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div> */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <IdCard className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
-              name="nationalId"
+              name="id"
               placeholder="National ID"
-              value={formData.nationalId}
+              value={formData.id}
+              onChange={handleChange}
+              pattern="[0-9]*"
+              required
+              className="pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        {/* phone number */}
+        <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Phone className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
               onChange={handleChange}
               required
               className="pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
           <button
             type="submit"
             disabled={isLoading}

@@ -2,24 +2,20 @@ import React, { useState } from 'react';
 import { 
   Train, Users, Calendar, Ticket, ListChecks, UserPlus, Shield, UserCog 
 } from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
 
 
 // Mock data (in a real app, this would come from an API)
 const initialTrains = [
   { 
-    id: 1, 
     name: 'Express Mumbai', 
     stations: ['Mumbai Central', 'Pune', 'Bangalore'], 
-    driver: null,
-    engineer: null
+    maxPassengers: 100,
   },
   { 
-    id: 2, 
-    name: 'Coastal Connector', 
-    stations: ['Chennai', 'Vizag', 'Kolkata'], 
-    driver: null,
-    engineer: null
+    name: 'Riyadh', 
+    stations: ['Mumbai Central', 'Pune', 'Bangalore'], 
+    maxPassengers: 100,
   }
 ];
 
@@ -53,14 +49,14 @@ const initialPassengers = [
   { 
     id: 1, 
     name: 'Rahul Kumar', 
-    trainId: 1, 
+    trainName: 'Express Mumbai', 
     status: 'confirmed',
     seat: '12A'
   },
   { 
     id: 2, 
     name: 'Priya Sharma', 
-    trainId: 1, 
+    trainName: 'Express Mumbai', 
     status: 'waitlist',
     seat: null
   }
@@ -89,7 +85,12 @@ const RailwayDashboard = () => {
     password: '',
     salary: ''
   });
-
+  const [isAddTrainModalOpen, setIsAddTrainModalOpen] = useState(false);
+  const [newTrainForm, setNewTrainForm] = useState({
+    name: '',
+    stations: '',
+    maxPassengers: ''
+  });
   // Previous methods remain the same...
 
   // New method to handle staff creation
@@ -131,6 +132,66 @@ const RailwayDashboard = () => {
     });
   };
 
+  const createTrain = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      // Prepare train data for backend
+      const trainData = {
+        name: newTrainForm.name,
+        stations: newTrainForm.stations.split(',').map(station => station.trim()),
+        max_passengers: parseInt(newTrainForm.maxPassengers)
+      };
+
+      // Send POST request to Flask backend
+      // const response = await axios.post('http://localhost:5000/api/trains', trainData);
+      console.log('Train data:', trainData);
+      const response = await fetch('http://localhost:5000/train/insert_train', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(trainData)
+      });
+
+      // Only update if backend responds successfully
+      if (response.ok) {
+        const newTrain = {
+          name: trainData.name,
+          stations: trainData.stations,
+          maxPassengers: trainData.max_passengers,
+        };
+
+        setTrains([...trains, newTrain]);
+        setIsAddTrainModalOpen(false);
+        
+        // Reset form
+        setNewTrainForm({
+          name: '',
+          stations: '',
+          maxPassengers: ''
+        });
+      }
+    } catch (error) {
+      console.error('Error adding train:', error);
+      alert('Failed to add train. Please try again.');
+    }
+  };
+  const navigate = useNavigate();
+  const signout = async () => {
+    // clear local storage
+    localStorage.clear();
+    await fetch('http://localhost:5000/auth/adminlogout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    navigate('/adminlogin');
+    // redirect to login
+    // window.location.href = '/login';
+  }
   // New method to render staff management section
   const renderStaffSection = () => (
     <div className="p-6">
@@ -268,7 +329,7 @@ const RailwayDashboard = () => {
           ))}
         </tbody>
       </table>
-
+          
       {/* Admin Add Modal */}
       {isAddAdminModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -334,6 +395,12 @@ const RailwayDashboard = () => {
         <h2 className="text-2xl font-bold flex items-center">
           <Train className="mr-2" /> Train Management
         </h2>
+        <button 
+          onClick={() => {setIsAddTrainModalOpen(true)}}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
+        >
+          <Train className="mr-2" /> Add Train
+        </button>
       </div>
   
       <table className="w-full bg-white shadow rounded-lg">
@@ -341,21 +408,68 @@ const RailwayDashboard = () => {
           <tr>
             <th className="p-3 text-left">Train Name</th>
             <th className="p-3 text-left">Stations</th>
-            <th className="p-3 text-left">Driver</th>
-            <th className="p-3 text-left">Engineer</th>
+            <th className="p-3 text-left">Max Capacity</th>
           </tr>
         </thead>
         <tbody>
           {trains.map(train => (
-            <tr key={train.id} className="border-b">
+            <tr key={train.name} className="border-b">
               <td className="p-3">{train.name}</td>
               <td className="p-3">{train.stations.join(', ')}</td>
-              <td className="p-3">{train.driver ? train.driver : 'N/A'}</td>
-              <td className="p-3">{train.engineer ? train.engineer : 'N/A'}</td>
+              <td className='p-3'>{train.maxPassengers}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {isAddTrainModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h3 className="text-xl font-bold mb-4">Add New Train</h3>
+            <form onSubmit={createTrain}>
+              <input 
+                type="text" 
+                placeholder="Train Name" 
+                required
+                value={newTrainForm.name}
+                onChange={(e) => setNewTrainForm({...newTrainForm, name: e.target.value})}
+                className="w-full border p-2 mb-2 rounded"
+              />
+              <input 
+                type="text" 
+                placeholder="Stations (comma-separated)" 
+                required
+                value={newTrainForm.stations}
+                onChange={(e) => setNewTrainForm({...newTrainForm, stations: e.target.value})}
+                className="w-full border p-2 mb-2 rounded"
+              />
+              <input 
+                type="number" 
+                placeholder="Max Passengers" 
+                required
+                value={newTrainForm.maxPassengers}
+                onChange={(e) => setNewTrainForm({...newTrainForm, maxPassengers: e.target.value})}
+                className="w-full border p-2 mb-2 rounded"
+              />
+              <div className="flex justify-end space-x-2">
+                <button 
+                  type="button"
+                  onClick={() => setIsAddTrainModalOpen(false)}
+                  className="bg-gray-300 text-black px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Add Train
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
   
@@ -378,7 +492,7 @@ const RailwayDashboard = () => {
         </thead>
         <tbody>
           {passengers.map(passenger => {
-            const train = trains.find(train => train.id === passenger.trainId);
+            const train = trains.find(train => train.name === passenger.trainName);
             return (
               <tr key={passenger.id} className="border-b">
                 <td className="p-3">{passenger.name}</td>
@@ -390,6 +504,7 @@ const RailwayDashboard = () => {
           })}
         </tbody>
       </table>
+      
     </div>
   );
   
@@ -400,7 +515,11 @@ const RailwayDashboard = () => {
       <div className="w-64 bg-white shadow-md">
         <div className="p-4 text-2xl font-bold border-b">
           Railway Admin
+          <button onClick={signout} className={"bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center text-xs"}>Sign Out</button>
         </div>
+        
+        {/* // add signout button here.  */}
+        
         <nav className="p-4">
           <button 
             onClick={() => setActiveSection('trains')}

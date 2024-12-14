@@ -1,4 +1,4 @@
-import Connect
+from . import Connect
 import Insert
 import Delete
 import Get

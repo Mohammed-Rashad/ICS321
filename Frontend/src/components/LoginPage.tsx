@@ -46,10 +46,12 @@ const LoginPage = () => {
       if (response.ok) {
       const data = await response.json();
       // Store the token in localStorage
-      localStorage.setItem('token', data.access_token);
-      
+      // localStorage.setItem('token', data.access_token);
+      localStorage.setItem('role', data.role);
+      localStorage.setItem('loggedIn', data.loggedIn);
+      localStorage.setItem('username', data.username);
       // Redirect to dashboard
-      navigate('/dashboard');
+      navigate('/home');
     } else {
       // Handle login error
       setError('Invalid credentials');
@@ -125,12 +127,10 @@ const LoginPage = () => {
         </form>
         
         <div className="text-center mt-4">
-          <a href="#" className="text-blue-500 hover:underline">
-            Forgot Password?
-          </a>
+          
           <p className="mt-2 text-gray-600">
             Don't have an account? 
-            <a href="#" className="text-blue-500 ml-1 hover:underline">
+            <a href="/signup" className="text-blue-500 ml-1 hover:underline">
               Sign Up
             </a>
           </p>

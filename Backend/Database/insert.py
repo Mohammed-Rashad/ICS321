@@ -2,7 +2,7 @@ import mysql.connector
 from . import Connect
 
 # The database connection is the first argument of every function in this file
-
+from werkzeug.security import generate_password_hash
 def insertTrain(number, maxPassengers):
     conn = Connect.getConnection()
     cur = conn.cursor()
@@ -24,19 +24,19 @@ def insertTrain(number, maxPassengers):
     finally:
         cur.close()
 
+# import hash
 
-def insertPassenger(id, name, balance, password, email, phone):
+def insertPassenger(name, balance, password, email, phone):
     conn = Connect.getConnection()
 
     # Input validation for balance
     if balance < 0:
         raise ValueError("Balance cannot be less than zero")
-
     cur = conn.cursor()
-    query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone) VALUES (%s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO passenger (Name, Balance, Password, Email, Phone) VALUES (%s, %s, %s, %s, %s)"
 
     try:
-        cur.execute(query, (id, name, balance, password, email, phone))
+        cur.execute(query, (name, balance, password, email, phone))
         conn.commit()
         print("Inserted passenger successfully")
     except mysql.connector.Error as e:
@@ -201,6 +201,7 @@ def insertAdmin(id, email, password, name, salary):
     conn = Connect.getConnection()
 
     cur = conn.cursor()
+    password = generate_password_hash(password)
     query = "INSERT INTO admin (ID, Email, Password, Name, Salary) VALUES (%s, %s, %s, %s, %s)"
 
     try:
@@ -212,7 +213,7 @@ def insertAdmin(id, email, password, name, salary):
         conn.rollback()
     finally:
         cur.close()
-
+# insertAdmin(1, 'admin@admin', 'password', 'admin', 4000)
 
 def insertEmployee(id, email, password, name, salary):
     conn = Connect.getConnection()
@@ -230,51 +231,7 @@ def insertEmployee(id, email, password, name, salary):
     finally:
         cur.close()
 
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
-def checkAdmin(email, password):
-    try:
-        conn = Connect.getConnection()  # Assuming this function provides a valid DB connection
-        cur = conn.cursor()
-        query = "SELECT email, password FROM admin WHERE email = %s"
-        cur.execute(query, (email,))
-        result = cur.fetchone()
 
-        # Check if user was found
-        if result:
-            # The result contains (username, hashed_password)
-            stored_username, stored_hashed_password = result
-
-            # Check if the password matches the stored hashed password
-            if check_password_hash(stored_hashed_password, password):
-                return True  # Admin credentials are valid
-            else:
-                return False  # Incorrect password
-        else:
-            return False  # No such admin user found
-
-    except mysql.connector.Error as e:
-        print(f"Error checking admin credentials: {e}")
-        return False  # Return False on error, you might want to log the error elsewhere
-
-    finally:
-        # Ensure resources are cleaned up properly
-        if cur:
-            cur.close()
-        if conn:
-            conn.commit()
-            
-# admin schema
-# CREATE TABLE admin (
-#     ID INT AUTO_INCREMENT NOT NULL,           -- Automatically incremented primary key
-#     email VARCHAR(100) NOT NULL,              -- Email cannot be null
-#     password VARCHAR(255) NOT NULL,           -- Sufficient space for hashed passwords
-#     Name VARCHAR(30) NOT NULL,                -- Name of the admin, cannot be null
-#     Salary DECIMAL(10, 2),                    -- Salary with 2 decimal places
-#     PRIMARY KEY (ID),                        -- Primary key on ID
-#     UNIQUE (email)                           -- Ensure email is unique across all records
-# );
-# a function that created a new admin user
 def addAdmin(email, password, name, salary):
     try:
         conn = Connect.getConnection()  # Assuming this function provides a valid DB connection

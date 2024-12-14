@@ -33,10 +33,10 @@ const AdminLoginPage = () => {
         username: email,
         password: password
       });
-
+      console.log('Login response:', response.data);
       // Store the token in localStorage
       localStorage.setItem('token', response.data.access_token);
-
+      
       // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {

@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin` (
-  `ID` int NOT NULL,
+  `ID` int NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `Name` varchar(30) NOT NULL,
@@ -103,11 +103,11 @@ DROP TABLE IF EXISTS `passenger`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `passenger` (
-  `ID` int NOT NULL,
-  `Name` varchar(15) NOT NULL,
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(30) NOT NULL,
   `Balance` int NOT NULL,
-  `password` varchar(20) NOT NULL,
-  `email` varchar(30) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `phone` varchar(14) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -187,7 +187,6 @@ DROP TABLE IF EXISTS `train`;
 CREATE TABLE `train` (
   `TrainNumber` int NOT NULL,
   `MaxPassenger` int NOT NULL,
-  `Cost` int NOT NULL,
   PRIMARY KEY (`TrainNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -297,3 +296,5 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-12-13 17:10:30
+
+

@@ -8,6 +8,7 @@ def token_required(func):
         try:
             verify_jwt_in_request()  # This automatically checks the token validity
             user_identity = get_jwt_identity()  # Optionally fetch the identity from the token
+            
         except Exception as e:
             return {"message": str(e)}, 401
         return func(*args, **kwargs)
