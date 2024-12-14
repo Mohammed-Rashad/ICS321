@@ -144,6 +144,26 @@ def canAfford(idList, trainNumber):
 #createWaitlist also exists in 'Insert.py'
 
 #Complete payment
+#Deposit money
+def deposit(id, amount):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+        UPDATE passenger
+        SET Balance = Balance + '%s'
+        WHERE id = '%s'
+        """
+        cursor.execute(query, (amount, id))
+        conn.commit()
+
+    except mysql.connector.Error as err:
+        print(f"Error while depositing {amount}: {err}")
+
+    finally:
+        cursor.close()
+
 
 #pay for a reservation
 #Note: returns true if paid successfully or if already paid before
