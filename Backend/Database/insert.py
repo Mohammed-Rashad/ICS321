@@ -211,51 +211,22 @@ def insertAssigned(id, date, number):
     finally:
         cur.close()
 
-def addAdmin(email, password, name, salary):
-    try:
-        conn = Connect.getConnection()  # Assuming this function provides a valid DB connection
-        cur = conn.cursor()
-        query = "INSERT INTO admin (email, password, Name, Salary) VALUES (%s, %s, %s, %s)"
-        # hashed_password = generate_password_hash(password)  # Hash the password before storing
-        cur.execute(query, (email, password, name, salary))
-        conn.commit()
-        return True  # Admin user added successfully
-
-    except mysql.connector.Error as e:
-        print(f"Error adding admin user: {e}")
-        conn.rollback()
-        return False  # Return False on error, you might want to log the error elsewhere
-
-    finally:
-        # Ensure resources are cleaned up properly
-        if cur:
-            cur.close()
-        if conn:
-            conn.commit()
-            
-            
-# insert trips
-# CREATE TABLE `trip` (
-#   `TripNumber` int NOT NULL,
-#   `Date` date NOT NULL,
-#   `TrainNumber` int NOT NULL,
-#   PRIMARY KEY (`TripNumber`,`Date`),
-#   KEY `TrainNumber` (`TrainNumber`),
-#   CONSTRAINT `trip_ibfk_1` FOREIGN KEY (`TrainNumber`) REFERENCES `train` (`TrainNumber`)
-# ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 def insertTrip(tripNumber, date, trainNumber):
     conn = Connect.getConnection()
     cur = conn.cursor()
-    query = "INSERT INTO trip (TripNumber, Date, TrainNumber) VALUES (%s, %s, %s)"
 
     try:
+        query = """
+        INSERT INTO trip (TripNumber, Date, TrainNumber) VALUES (%s, %s, %s)
+        """
         cur.execute(query, (tripNumber, date, trainNumber))
         conn.commit()
-        cur.close()
         print("Inserted trip successfully")
+
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+
     finally:
         cur.close()
