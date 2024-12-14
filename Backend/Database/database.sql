@@ -18,6 +18,15 @@
 --
 -- Table structure for table `admin`
 --
+DROP TABLE IF EXISTS person;
+CREATE TABLE Person(
+	id INT NOT NULL,
+    primary key (id)
+);
+
+--
+-- Table structure for table `admin`
+--
 
 DROP TABLE IF EXISTS `admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -80,7 +89,8 @@ CREATE TABLE `dependent` (
   `Name` varchar(15) NOT NULL,
   `GuardianID` int NOT NULL,
   PRIMARY KEY (`ID`),
-  FOREIGN KEY (`GuardianID`) REFERENCES `passenger` (`ID`)
+  FOREIGN KEY (`GuardianID`) REFERENCES `passenger` (`ID`),
+  FOREIGN KEY (ID) REFERENCES PERSON(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -135,7 +145,8 @@ CREATE TABLE `passenger` (
   `email` varchar(30) NOT NULL,
   `phone` varchar(14) NOT NULL,
   `isLoyalty` tinyint(1) NOT NULL,
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (ID) REFERENCES PERSON(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -166,7 +177,7 @@ CREATE TABLE `reservation` (
   PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
   FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
   FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`)
+  FOREIGN KEY (`PassengerID`) REFERENCES `person` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -294,7 +305,7 @@ CREATE TABLE `waitlist` (
   `lastStation` time NOT NULL,
   PRIMARY KEY (`PassengerID`,`TripNumber`,`Date`,`firstStation`,`lastStation`),
   FOREIGN KEY (`TripNumber`, `Date`, `firstStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`),
-  FOREIGN KEY (`PassengerID`) REFERENCES `passenger` (`ID`),
+  FOREIGN KEY (`PassengerID`) REFERENCES `person` (`ID`),
   FOREIGN KEY (`TripNumber`, `Date`, `lastStation`) REFERENCES `trip_stop` (`TripNumber`, `Date`, `Time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
