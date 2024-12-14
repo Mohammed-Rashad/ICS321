@@ -20,7 +20,7 @@ def searchForTrain(initialStation, finalStation, date):
     JOIN trip_stop AS final
     ON initial.TripNumber = final.TripNumber
        AND initial.Date = final.Date
-       AND initial.StopOrder < final.StopOrder
+       AND initial.time < final.time
     WHERE initial.StationName = '%s'
       AND final.StationName = '%s'
       AND initial.Date = '%s';
@@ -273,3 +273,66 @@ def getAllWaitlists(passengerId):
 #Functions of System
 
 #Send email reminders to passengers who did not pay
+
+#Get id of all passengers travelling a certain day who haven't paid yet
+def getHaventPaid(date):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT PassengerID
+    FROM reservation
+    WHERE Date = '%s'
+    AND HasPaid = 0
+    """
+
+    try:
+        cursor.execute(query, (date,))
+        reservations = cursor.fetchall()
+        return [i[0] for i in reservations]
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for reservations who haven't paid: {err}")
+        return None
+
+    finally:
+        cursor.close()
+
+
+#Using a trigger send a message to a passenger 3 hours before the departure of his train
+
+#This is what I can do I guess
+#Get id of all passengers leaving from a certain station at a certain trip on a certain day
+def getStationPassengers(tripNumber, date, stationName):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT PassengerID
+    FROM reservation
+    JOIN trip_stop
+    ON reservation.TripNumber = trip_stop.TripNumber
+    AND reservation.Date = trip_stop.Date
+    AND reservation.FirstStation = trip_stop.time
+    WHERE reservation.TripNumber = '%s'
+    AND reservation.Date = '%s'
+    AND trip_stop.StationName = '%s'
+    """
+
+    try:
+        cursor.execute(query, (stationName, date))
+        reservations = cursor.fetchall()
+        return [i[0] for i in reservations]
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for reservations leaving from a station: {err}")
+
+#General Function
+
+#Login and logout
+#getPassenger, getEmployee, getAdmin is all you need from me :)
+
+
+#Generate Reports
+
+#Current active trains that are on their way today

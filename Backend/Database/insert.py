@@ -90,73 +90,24 @@ def insertStation(name, city):
         cur.close()
 
 
-def insertTrip(tripNumber, date, trainNumber):
+def insertTripStop(tripNumber, date, time, stationName):
     conn = Connect.getConnection()
-
     cur = conn.cursor()
 
-    check_train_query = "SELECT COUNT(*) FROM train WHERE TrainNumber = %s"
-    insert_query = "INSERT INTO trip (TripNumber, Date, TrainNumber) VALUES (%s, %s, %s)"
-
-    # Validate trainNumber exists
-    cur.execute(check_train_query, (trainNumber,))
-    train_exists = cur.fetchone()[0]
-
-    if train_exists == 0:
-        cur.close()
-        raise ValueError(f"TrainNumber {trainNumber} does not exist in the train table.")
-
     try:
-
-        # Proceed with the insertion
-        cur.execute(insert_query, (tripNumber, date, trainNumber))
-        conn.commit()
-        print("Inserted trip successfully")
-    except mysql.connector.Error as e:
-        print(f"Error inserting data: {e}")
-        conn.rollback()
-    finally:
-        cur.close()
-
-
-
-def insertTripStop(tripNumber, date, stopOrder, stationName):     # Seats available is set to number of seats by default
-    conn = Connect.getConnection()
-
-    cur = conn.cursor()
-
-    # Query to get MaxPassenger from the train table
-    get_max_passenger_query = """
-        SELECT t.MaxPassenger
-        FROM train t
-        JOIN trip tr ON t.TrainNumber = tr.TrainNumber
-        WHERE tr.TripNumber = %s AND tr.Date = %s
-    """
-
-    # Query to insert data into trip_stop table
-    insert_query = """
-        INSERT INTO trip_stop (TripNumber, Date, StopOrder, StationName, SeatsAvailable) 
-        VALUES (%s, %s, %s, %s, %s)
-    """
-
-    try:
-        # Fetch MaxPassenger
-        cur.execute(get_max_passenger_query, (tripNumber, date))
-        result = cur.fetchone()
-
-        if not result:
-            cur.close()
-            raise ValueError(f"No matching trip found for TripNumber {tripNumber} on Date {date}")
-
-        max_passengers = result[0]
-
-        # Proceed with the insertion
-        cur.execute(insert_query, (tripNumber, date, stopOrder, stationName, max_passengers))
+        # Insert the new stop
+        query = """
+        INSERT INTO trip_stop (TripNumber, Date, Time, StationName) 
+        VALUES (%s, %s, %s, %s)
+        """
+        cur.execute(query, (tripNumber, date, time, stationName))
         conn.commit()
         print("Inserted trip stop successfully")
+
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+
     finally:
         cur.close()
 
