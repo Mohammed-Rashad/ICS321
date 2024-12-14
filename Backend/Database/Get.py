@@ -221,21 +221,21 @@ def getTrip(tripNumber, date):
         cur.close()
 
 
-def getTripStop(number, date, stopOrder):
+def getTripStop(number, date, time):
     conn = Connect.getConnection()  # Assuming getConnection() gives you the active connection
     cur = conn.cursor()
 
-    query = "SELECT * FROM trip_stop WHERE TripNumber = %s AND Date = %s AND StopOrder = %s"
+    query = "SELECT * FROM trip_stop WHERE TripNumber = %s AND Date = %s AND time = %s"
 
     try:
-        cur.execute(query, (number, date, stopOrder))
+        cur.execute(query, (number, date, time))
         result = cur.fetchone()
 
         if result:
-            print(f"Trip Stop details for TripNumber {number}, Date {date}, StopOrder {stopOrder}: {result}")
+            print(f"Trip Stop details for TripNumber {number}, Date {date}, time {time}: {result}")
             return result
         else:
-            print(f"No trip stop found for TripNumber {number}, Date {date}, StopOrder {stopOrder}.")
+            print(f"No trip stop found for TripNumber {number}, Date {date}, time {time}.")
             return None
 
     except mysql.connector.Error as e:

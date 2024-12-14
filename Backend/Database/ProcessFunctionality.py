@@ -20,7 +20,7 @@ def searchForTrain(initialStation, finalStation, date):
     JOIN trip_stop AS final
     ON initial.TripNumber = final.TripNumber
        AND initial.Date = final.Date
-       AND initial.StopOrder < final.StopOrder
+       AND initial.time < final.time
     WHERE initial.StationName = '%s'
       AND final.StationName = '%s'
       AND initial.Date = '%s';
@@ -313,7 +313,7 @@ def getStationPassengers(tripNumber, date, stationName):
     JOIN trip_stop
     ON reservation.TripNumber = trip_stop.TripNumber
     AND reservation.Date = trip_stop.Date
-    AND reservation.FirstStation = trip_stop.StopOrder
+    AND reservation.FirstStation = trip_stop.time
     WHERE reservation.TripNumber = '%s'
     AND reservation.Date = '%s'
     AND trip_stop.StationName = '%s'

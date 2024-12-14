@@ -205,24 +205,24 @@ def deleteTrip(tripNumber, date):
         cur.close()
 
 
-def deleteTripStop(tripNumber, date, stopOrder):
+def deleteTripStop(tripNumber, date, time):
     conn = Connect.getConnection()
     cur = conn.cursor()
 
-    # Query to delete a trip stop by its TripNumber, Date, and StopOrder
-    query = "DELETE FROM trip_stop WHERE TripNumber = %s AND Date = %s AND StopOrder = %s"
+    # Query to delete a trip stop by its TripNumber, Date, and time
+    query = "DELETE FROM trip_stop WHERE TripNumber = %s AND Date = %s AND time = %s"
 
     try:
         # Execute the delete query
-        cur.execute(query, (tripNumber, date, stopOrder))
+        cur.execute(query, (tripNumber, date, time))
         conn.commit()
 
         # Check if a row was deleted
         if cur.rowcount > 0:
-            print(f"Deleted trip stop with TripNumber = {tripNumber}, Date = {date}, and StopOrder = {stopOrder}.")
+            print(f"Deleted trip stop with TripNumber = {tripNumber}, Date = {date}, and time = {time}.")
             return True
         else:
-            print(f"No trip stop found with TripNumber = {tripNumber}, Date = {date}, and StopOrder = {stopOrder}.")
+            print(f"No trip stop found with TripNumber = {tripNumber}, Date = {date}, and time = {time}.")
             return False
 
     except mysql.connector.Error as e:
