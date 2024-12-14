@@ -136,9 +136,11 @@ def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, 
         cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber, 0))   #default is hasn't paid
         conn.commit()
         print("Inserted reservation successfully")
+        return True
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+        return False
     finally:
         cur.close()
 
