@@ -181,6 +181,58 @@ def pay(trainNumber, id):
 #Add/Edit/Cancel reservation/ticket
 #Add and cancel already exist
 #For edit just remove and add again (don't forget to check the valid seat numbers for the adjusted trip and the cost and everything)
+#You will probably need this
+#Search for all reservations of a given id
+def getAllReservations(passengerId):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+    query = """
+    SELECT *
+    FROM reservation
+    WHERE PassengerID = '%s'
+    """
+
+    try:
+        cursor.execute(query, (passengerId,))
+        reservations = cursor.fetchall()
+        return reservations
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for reservations: {err}")
+        return None
+
+    finally:
+        cursor.close()
 
 #Assign staff to a train for a given date
-#Insert/Delete/Get Assigned were added
+#(insert/delete/get)Assigned were added
+
+#Promote a waitlisted passenger
+#You can just removeWaitlist(...) and insertReservation(...)
+#You will also probably need this
+#Search for all waitlistings of a given id
+def getAllWaitlists(passengerId):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+    query = """
+    SELECT *
+    FROM waitlist
+    WHERE PassengerID = '%s'
+    """
+
+    try:
+        cursor.execute(query, (passengerId,))
+        waitlists = cursor.fetchall()
+        return waitlists
+
+    except mysql.connector.Error as err:
+        print(f"Error searching for waitlists: {err}")
+        return None
+
+    finally:
+        cursor.close()
+
+
+#Functions of System
+
+#Send email reminders to passengers who did not pay
