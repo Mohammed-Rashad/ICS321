@@ -27,22 +27,21 @@ def insertTrain(number, maxPassengers, cost):
 
 def insertPassenger(id, name, balance, password, email, phone):
     conn = Connect.getConnection()
-
     # Input validation for balance
     if balance < 0:
         raise ValueError("Balance cannot be less than zero")
 
     cur = conn.cursor()
-    query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone, isLoyalty) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
     try:
-        cur.execute(query, (id, name, balance, password, email, phone, 0))
-
         query = """
                 INSERT INTO person (ID) VALUES (%s)
                 """
 
         cur.execute(query, (id,))
+
+        query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone, isLoyalty) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        cur.execute(query, (id, name, balance, password, email, phone, 0))
 
         conn.commit()
         print("Inserted passenger successfully")
@@ -66,16 +65,16 @@ def insertDependent(id, name, guardianID):
         cur.close()
         raise ValueError("Guardian does not exist")
 
-    query = "INSERT INTO dependent (ID, Name, GuardianID) VALUES (%s, %s, %s)"
+
 
     try:
-        cur.execute(query, (id, name, guardianID))
-
         query = """
         INSERT INTO person (ID) VALUES (%s)
         """
-
         cur.execute(query, (id,))
+
+        query = "INSERT INTO dependent (ID, Name, GuardianID) VALUES (%s, %s, %s)"
+        cur.execute(query, (id, name, guardianID))
 
         conn.commit()
         print("Inserted dependent successfully")
@@ -157,9 +156,11 @@ def insertWaitlist(passengerID, tripNumber, date):
         cur.execute(query, (passengerID, tripNumber, date))
         conn.commit()
         print("Inserted waitlist entry successfully")
+        return True
     except mysql.connector.Error as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+        return False
     finally:
         cur.close()
 

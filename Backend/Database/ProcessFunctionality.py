@@ -64,7 +64,7 @@ def availableSeats(tripNumber, date):     #use initial & final station numbers f
         JOIN trip
         ON train.TrainNumber = trip.TrainNumber
         WHERE trip.TripNumber = '%s'
-        AND trip.Date = '%s'
+        AND trip.Date = %s
         """
 
         cursor.execute(query, (tripNumber, date))
@@ -255,11 +255,22 @@ def getAllReservations(passengerId):
     finally:
         cursor.close()
 
+
 #Assign staff to a train for a given date
 #(insert/delete/get)Assigned were added
 
 #Promote a waitlisted passenger
-#You can just removeWaitlist(...) and insertReservation(...)
+def promoteWaitlist(id, tripNumber, date):
+    seats = availableSeats(tripNumber, date)
+
+    if not seats:
+        return False
+
+    seat = seats[0]
+
+    return Insert.insertReservation(id, tripNumber, date, seat) and Delete.deleteWaitlist(id, tripNumber, date)
+
+
 #You will also probably need this
 #Search for all waitlistings of a given id
 def getAllWaitlists(passengerId):
