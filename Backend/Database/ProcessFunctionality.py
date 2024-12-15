@@ -379,27 +379,7 @@ def getTrainStations(trainNumber, date):
 
 
 #Reservation details given ID
-def getAllReservations(id):
-    conn = Connect.getConnection()
-    cursor = conn.cursor()
-
-    try:
-        query = """
-        SELECT *
-        FROM reservation
-        WHERE PassengerID = '%s'
-        """
-
-        cursor.execute(query, (id,))
-        reservations = cursor.fetchall()
-        return reservations
-
-    except mysql.connector.Error as err:
-        print(f"Error searching for reservations: {err}")
-        return None
-
-    finally:
-        cursor.close()
+#Done above
 
 
 #Waitlisted loyalty passengers given a train number
@@ -434,7 +414,7 @@ def getWaitlistLoyalty(trainNumber):
 
 #Average load factor per train on a given date
 #Only gives trains working on that day
-'''
+
 def getLoadFactor(date):
     conn = Connect.getConnection()
     cursor = conn.cursor()
@@ -443,13 +423,10 @@ def getLoadFactor(date):
         query = """
         SELECT trip.TrainNumber, Count(*)
         FROM reservation
-        JOIN trip_stop
-        ON reservation.TripNumber = trip_stop.TripNumber
-        and reservation.Date = trip_stop.Date
-        and reservation.firstStation <= trip_stop.Time
-        and reservation.lastStation > trip_stop.Time
-        JOIN trip ON trip_stop.TripNumber = trip.TripNumber and trip_stop.Date = trip.Date
-        WHERE trip_stop.Date = %s
+        JOIN trip
+        ON reservation.TripNumber = trip.TripNumber
+        and reservation.Date = trip.Date
+        WHERE trip.Date = %s
         GROUP BY trip.TrainNumber
         """
         cursor.execute(query, (date, ))
@@ -461,15 +438,6 @@ def getLoadFactor(date):
             passengerCount = row[1]
 
             query = """
-            SELECT COUNT(*)
-            FROM trip_stop
-            JOIN trip ON trip_stop.TripNumber = trip.TripNumber and trip_stop.Date = trip.Date
-            WHERE TrainNumber = '%s'
-            """
-            cursor.execute(query, (trainNumber,))
-            stopCount = cursor.fetchall()[0][0] - 1
-
-            query = """
             SELECT MaxPassenger
             FROM train
             WHERE TrainNumber = '%s'
@@ -477,9 +445,7 @@ def getLoadFactor(date):
             cursor.execute(query, (trainNumber,))
             maxPassenger = cursor.fetchall()[0][0]
 
-            totalMax = maxPassenger * stopCount
-
-            loadFactor = passengerCount / totalMax
+            loadFactor = passengerCount / maxPassenger
 
             loadFactorDict[trainNumber] = loadFactor
 
@@ -491,7 +457,7 @@ def getLoadFactor(date):
 
     finally:
         cursor.close()
-'''
+
 
 #List of dependents travelling on a given date in all trains
 def getAllTravellingDependents(date):

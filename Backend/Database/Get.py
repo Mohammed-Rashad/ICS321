@@ -249,16 +249,16 @@ def getReservation(passengerID, tripNumber, date):
         cur.close()
 
 
-def getWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
+def getWaitlist(passengerID, tripNumber, date):
     conn = Connect.getConnection()  # Assuming getConnection() gives you the active connection
     cur = conn.cursor()
 
     query = """SELECT * FROM waitlist 
                WHERE PassengerID = %s AND TripNumber = %s AND Date = %s 
-               AND FirstStation = %s AND LastStation = %s"""
+               """
 
     try:
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cur.execute(query, (passengerID, tripNumber, date))
         result = cur.fetchone()
 
         if result:

@@ -283,7 +283,7 @@ def deleteReservation(passengerID, tripNumber, date):
         cur.close()
 
 
-def deleteWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
+def deleteWaitlist(passengerID, tripNumber, date):
     conn = Connect.getConnection()
     cur = conn.cursor()
 
@@ -291,17 +291,16 @@ def deleteWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
     query = """
         DELETE FROM waitlist 
         WHERE PassengerID = %s AND TripNumber = %s AND Date = %s 
-        AND FirstStation = %s AND LastStation = %s
     """
 
     try:
         # Execute the delete query
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cur.execute(query, (passengerID, tripNumber, date))
         conn.commit()
 
         # Check if a row was deleted
         if cur.rowcount > 0:
-            print(f"Deleted waitlist entry for PassengerID = {passengerID}, TripNumber = {tripNumber}, Date = {date}, FirstStation = {firstStation}, LastStation = {lastStation}.")
+            print(f"Deleted waitlist entry for PassengerID = {passengerID}, TripNumber = {tripNumber}, Date = {date}.")
             return True
         else:
             print(f"No waitlist entry found with the given parameters.")

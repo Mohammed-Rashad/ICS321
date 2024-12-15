@@ -134,7 +134,7 @@ def insertReservation(passengerID, tripNumber, date, seatNumber):
 
     query = "INSERT INTO reservation (PassengerID, TripNumber, Date, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s)"
     try:
-        cur.execute(query, (passengerID, tripNumber, date, seatNumber, 0))   #default is hasn't paid
+        cur.execute(query, (passengerID, tripNumber, date, seatNumber, 0))   #default hasn't paid
         conn.commit()
         print("Inserted reservation successfully")
         return True
@@ -147,14 +147,14 @@ def insertReservation(passengerID, tripNumber, date, seatNumber):
 
 
 # Insert Waitlist function
-def insertWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
+def insertWaitlist(passengerID, tripNumber, date):
     conn = Connect.getConnection()
 
     cur = conn.cursor()
 
-    query = "INSERT INTO waitlist (PassengerID, TripNumber, Date, FirstStation, LastStation) VALUES (%s, %s, %s, %s, %s)"
+    query = "INSERT INTO waitlist (PassengerID, TripNumber, Date) VALUES (%s, %s, %s)"
     try:
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cur.execute(query, (passengerID, tripNumber, date))
         conn.commit()
         print("Inserted waitlist entry successfully")
     except mysql.connector.Error as e:

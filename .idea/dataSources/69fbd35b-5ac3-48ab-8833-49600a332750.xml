@@ -1081,7 +1081,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </schema>
     <schema id="294" parent="1" name="train_management_system">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-12-15.10:31:03</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-12-15.10:51:54</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <user id="295" parent="1" name="engmr">
@@ -1580,61 +1580,31 @@ Time</ColNames>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="397" parent="311" name="firstStation">
-      <DasType>time|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-    </column>
-    <column id="398" parent="311" name="lastStation">
-      <DasType>time|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>5</Position>
-    </column>
-    <foreign-key id="399" parent="311" name="waitlist_ibfk_2">
+    <foreign-key id="397" parent="311" name="waitlist_ibfk_2">
       <ColNames>PassengerID</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>person</RefTableName>
     </foreign-key>
-    <foreign-key id="400" parent="311" name="waitlist_ibfk_1">
+    <foreign-key id="398" parent="311" name="waitlist_ibfk_1">
       <ColNames>TripNumber
-Date
-firstStation</ColNames>
+Date</ColNames>
       <RefColNames>TripNumber
-Date
-Time</RefColNames>
-      <RefTableName>trip_stop</RefTableName>
+Date</RefColNames>
+      <RefTableName>trip</RefTableName>
     </foreign-key>
-    <foreign-key id="401" parent="311" name="waitlist_ibfk_3">
-      <ColNames>TripNumber
-Date
-lastStation</ColNames>
-      <RefColNames>TripNumber
-Date
-Time</RefColNames>
-      <RefTableName>trip_stop</RefTableName>
-    </foreign-key>
-    <index id="402" parent="311" name="PRIMARY">
+    <index id="399" parent="311" name="PRIMARY">
       <ColNames>PassengerID
 TripNumber
-Date
-firstStation
-lastStation</ColNames>
+Date</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="403" parent="311" name="TripNumber">
+    <index id="400" parent="311" name="TripNumber">
       <ColNames>TripNumber
-Date
-firstStation</ColNames>
+Date</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="404" parent="311" name="TripNumber_2">
-      <ColNames>TripNumber
-Date
-lastStation</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="405" parent="311" name="PRIMARY">
+    <key id="401" parent="311" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
