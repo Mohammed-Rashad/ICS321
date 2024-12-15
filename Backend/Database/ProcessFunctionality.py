@@ -511,7 +511,7 @@ def getAllTravellingDependents(date):
         FROM dependent
         JOIN reservation
         ON reservation.PassengerID = dependent.ID
-        WHERE Date = '%s'
+        WHERE Date = %s
         """
 
         cursor.execute(query, (date,))
