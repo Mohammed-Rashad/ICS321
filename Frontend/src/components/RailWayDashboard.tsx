@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 // Mock data (in a real app, this would come from an API)
 const initialTrains = [
   { 
-    name: 'Najran', 
-    stations: ['Najran', 'Abha', 'Mecca'], 
-    maxPassengers: '34',
-    cost: '32',
+    name: '', 
+    stations: [''], 
+    maxPassengers: '',
+    cost: '',
     id: 1
   }
 ];
@@ -19,15 +19,15 @@ const initialTrains = [
 const initialStaff = [
   { 
     id: 1, 
-    name: 'John Doe', 
-    email: 'john.doe@railway.com',
+    name: 'Ali', 
+    email: 'Ali@railway.com',
     role: 'Driver',
     salary: 45000 
   },
   { 
     id: 2, 
-    name: 'Alice Smith', 
-    email: 'alice.smith@railway.com',
+    name: 'Saleh', 
+    email: 'Saleh@railway.com',
     role: 'Engineer',
     salary: 50000 
   }
@@ -45,15 +45,15 @@ const initialAdmins = [
 const initialPassengers = [
   { 
     id: 1, 
-    name: 'Rahul Kumar', 
-    trainName: 'Express Mumbai', 
+    name: 'Abdullah', 
+    trainName: 'Train 1', 
     status: 'confirmed',
-    seat: '12A'
+    seat: '2'
   },
   { 
     id: 2, 
-    name: 'Priya Sharma', 
-    trainName: 'Express Mumbai', 
+    name: 'Omar', 
+    trainName: 'Train 2', 
     status: 'waitlist',
     seat: null
   }
@@ -442,7 +442,6 @@ const RailwayDashboard = () => {
         <thead className="bg-gray-100">
           <tr>
             <th className="p-3 text-left">Train Name</th>
-            <th className="p-3 text-left">Stations</th>
             <th className="p-3 text-left">Max Capacity</th>
             <th className="p-3 text-left">Cost</th>
           </tr>
@@ -451,7 +450,6 @@ const RailwayDashboard = () => {
           {trains.map(train => (
             <tr key={train.name} className="border-b">
               <td className="p-3">{train.name}</td>
-              <td className="p-3">{train.stations.join(', ')}</td>
               <td className='p-3'>{train.maxPassengers}</td>
               <td className='p-3'>S.R {train.cost}</td>
             </tr>

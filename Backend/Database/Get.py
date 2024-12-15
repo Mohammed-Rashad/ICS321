@@ -481,5 +481,26 @@ def getAllTrips(date):
     finally:
         cur.close()
         
-
+# get all user trips
+def getAllUserBooking(userID):
+    conn = Connect.getConnection()
+    cur = conn.cursor()
+    query = "SELECT * FROM booking WHERE PassengerID = %s"
+    try:
+        cur.execute(query, (userID,))
+        result = cur.fetchall()
+        if result:
+            print(f"Trip details: {result}")
+            return result
+        else:
+            print(f"No trips found.")
+            return None
+    except mysql.connector.Error as e:
+        print(f"Error fetching data: {e}")
+        raise e
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        raise e
+    finally:
+        cur.close()
     

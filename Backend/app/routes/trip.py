@@ -125,27 +125,94 @@ def getComingTrips():
 
 
 # BOOK TRIP
-@bp.route('/book', methods=['GET'])
+# @bp.route('/book', methods=['GET'])
+# def bookTrip():
+#     try:
+#         data = request.json
+#         print(data)
+#         passengerId = data.get("passengerId")
+#         tripNumber = data.get("tripNumber")
+#         date = data.get("date")
+#         tripDetails = getDb.getAllTrainStopsForTrip(tripNumber, date)
+#         # print(tripDetails)
+#         initialStation = tripDetails[0][2]
+#         finalStation = tripDetails[-1][2]
+#         print("################################################################")
+
+#         available_seats = pfDb.availableSeats(tripNumber, date, initialStation, finalStation)
+#         if len(available_seats) == 0:
+#             pass
+#         else:
+#             seat = available_seats[0]
+            
+#             db.insertBooking(passengerId, tripNumber, date, seat)
+#             return jsonify({"message": "Done"}), 200
+#     except:
+#         return jsonify({"error": "something wrong"}), 404
+
+
+
+@bp.route('/book', methods=['POST'])
 def bookTrip():
     try:
+        # Parse request data
         data = request.json
-        print(data)
         passengerId = data.get("passengerId")
         tripNumber = data.get("tripNumber")
         date = data.get("date")
+        # convert date text to delta
+        date = datetime.strptime(date, '%d-%m-%Y').date()
+        # assure all exist
+        if not passengerId or not tripNumber or not date:
+            return jsonify({"error": "Missing data"}), 400  # Bad request
+        print(data)
+        print("222222222222222222222222222222")
+        # Retrieve trip details
         tripDetails = getDb.getAllTrainStopsForTrip(tripNumber, date)
-        # print(tripDetails)
         initialStation = tripDetails[0][2]
         finalStation = tripDetails[-1][2]
         print("################################################################")
 
+        # Check available seats
         available_seats = pfDb.availableSeats(tripNumber, date, initialStation, finalStation)
         if len(available_seats) == 0:
-            pass
+            return jsonify({"status": "waitlisted"}), 200  # No available seats (client error)
         else:
             seat = available_seats[0]
             
-            db.insertReservation(passengerId, tripNumber, date, tripDetails[0][3], tripDetails[-1][3], seat)
-            return jsonify({"message": "Done"}), 200
-    except:
+            # Insert booking
+            db.insertBooking(passengerId, tripNumber, date, seat)
+            return jsonify({"status": "reserved"}), 200
+    
+    except KeyError as e:  # Catch missing key error in request data
+        print(f"Missing data: {str(e)}")  # Log the error
+        return jsonify({"error": f"Missing data: {str(e)}"}), 400  # Bad request
+    
+    except Exception as e:  # Catch other unexpected errors
+        print(f"Unexpected error: {str(e)}")  # Log the error
+        return jsonify({"error": "Something went wrong"}), 500  # Internal server error
+
+# pay
+@bp.route('/pay', methods=['POST'])
+def pay():
+    try:
+        # Parse request data
+        data = request.json
+        passengerId = data.get("passengerId")
+        tripNumber = data.get("tripNumber")
+        date = data.get("date")
+        print(data)
+        # convert date text to delta
+        date = datetime.strptime(date, '%d-%m-%Y').date()
+        print(date)
+        # assure all exist
+        if not passengerId or not tripNumber or not date:
+            return jsonify({"error": "Missing data"}), 400  # Bad request
+        isConfirmed = pfDb.confirmPayment(passengerId, tripNumber, date)
+        if isConfirmed:
+            return jsonify({"status": "confirmed"}), 200
+        else:
+            return jsonify({"status": "not confirmed"}), 400
+    except Exception as e:
+        print(f"Error: {str(e)}")
         return jsonify({"error": "something wrong"}), 404

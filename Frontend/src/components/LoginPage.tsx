@@ -49,7 +49,8 @@ const LoginPage = () => {
       // localStorage.setItem('token', data.access_token);
       localStorage.setItem('role', data.role);
       localStorage.setItem('loggedIn', data.loggedIn);
-      localStorage.setItem('username', data.username);
+      localStorage.setItem('passengerId', data.userId);
+      localStorage.setItem('name', data.name);
       // Redirect to dashboard
       navigate('/home');
     } else {

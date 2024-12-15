@@ -9,13 +9,17 @@ import AdminLoginPage from "./components/AdminLogin";
 import ProtectedRoute from './components/ProtectedRoute';
 import RailwayDashboard from "./components/RailWayDashboard";
 import SignupForm from "./components/SignUp";
+import RailwayApp from "./components/RailwayApp";
+import PaymentPage from "./components/Payment";
+import Profile from "./components/Profile";
 // you can use the components in other components
 function App() { 
   return (
     <Routes>
-      <Route path="/" element={<Main />} />
+      <Route path="/" element={<RailwayApp />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupForm />} />
+      <Route path="/payment" element={<PaymentPage />} />
       <Route 
           path="/dashboard" 
           element={
@@ -24,7 +28,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
-      <Route path="/profile" element={<UserProfile />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/adminLogin" element={<AdminLoginPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

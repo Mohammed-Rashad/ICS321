@@ -26,29 +26,32 @@ def insertTrain(number, maxPassengers, cost):
 
 # import hash
 
-def insertPassenger(name, balance, password, email, phone):
+def insertPassenger(id, name, balance, password, email, phone):
     conn = Connect.getConnection()
 
     # Input validation for balance
     if balance < 0:
         raise ValueError("Balance cannot be less than zero")
     cur = conn.cursor()
+    print(name, balance, password, email, phone)
     query = "INSERT INTO passenger (ID, Name, Balance, Password, Email, Phone, isLoyalty) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
     try:
-        cur.execute(query, (id, name, balance, password, email, phone, 0))
+        
 
-        query = """
+        query2 = """
                 INSERT INTO person (ID) VALUES (%s)
                 """
 
-        cur.execute(query, (id,))
-
+        cur.execute(query2, (id,))
+        cur.execute(query, (id, name, balance, password, email, phone, 0))
         conn.commit()
         print("Inserted passenger successfully")
     except mysql.connector.Error as e:
+        
         print(f"Error inserting data: {e}")
         conn.rollback()
+        raise e
     finally:
         cur.close()
 
@@ -144,7 +147,23 @@ def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, 
     finally:
         cur.close()
 
+def insertBooking(passengerID, tripNumber, date, seatNumber):
+    conn = Connect.getConnection()
 
+    cur = conn.cursor()
+    query = "INSERT INTO booking (PassengerID, TripNumber, Date, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s)"
+    try:
+        cur.execute(query, (passengerID, tripNumber, date, seatNumber, 0))
+        conn.commit()
+        print("Inserted booking successfully")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        conn.rollback()
+        raise e
+    except Exception as e:
+        raise e
+    finally:
+        cur.close()
 # Insert Waitlist function
 def insertWaitlist(passengerID, tripNumber, date, firstStation, lastStation):
     conn = Connect.getConnection()

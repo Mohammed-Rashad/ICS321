@@ -36,3 +36,8 @@ def average_load():
 @role_required('admin')
 def list_dependents():
     return jsonify({"message": "This is a sample list_dependents report"})
+
+# @bp.route('/list_dependents', methods=['GET'])#admins
+# def list_dependents():
+    
+#     return jsonify({"message": "This is a sample list_dependents report"})

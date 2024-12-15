@@ -232,7 +232,21 @@ def pay(passengerID, tripNumber, date, firstStation, lastStation):
     finally:
         cursor.close()
 
-
+def confirmPayment(passengerID, tripNumber, date):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+    query = "Update booking set hasPaid = 1 where PassengerID = %s and TripNumber = %s and Date = %s"
+    try:
+        cursor.execute(query, (passengerID, tripNumber, date))
+        conn.commit()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error confirming payment: {err}")
+        conn.rollback()
+        return False
+    finally:
+        cursor.close()
+    
 #Functions of Staff/Admin
 
 #Add/Edit/Cancel reservation/ticket

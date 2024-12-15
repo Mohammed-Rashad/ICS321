@@ -107,6 +107,7 @@ def complete_payment():
 #   `phone` varchar(14) NOT NULL,
 #   PRIMARY KEY (`ID`)
 # )
+import random
 @bp.route('/signup', methods = ['POST'])
 def sign_up():
     try: 
@@ -130,11 +131,33 @@ def sign_up():
         if passengerWithEmail:
             return jsonify({"error": "Email already exists"}), 400
 
+        # get random id between 0 and 1000000
+        id = random.randint(0, 1000000)
+        print(id)
         # insert passenger into database
-        getDb.insertPassenger(name, 0,  password, email, phone)
+        insertDb.insertPassenger(id, name, 0,  password, email, phone)
         return jsonify({"message": "Passenger created successfully"}), 201
     
     except Exception as e:
         return jsonify({"error": f"An error occurred: {e}"}), 500
         
 
+# profile
+@bp.route('/profile', methods = ['GET'])
+def profile():
+    try:
+        # data = request.json
+        id = request.args.get('passengerId')
+        passenger = getDb.getPassenger(id)
+        ID, Name, Balance, Password, Email, Phone, isLoyalty = passenger
+        # get All trips for passenger
+        trips = getDb.getAllUserBooking(id)
+        tripList = []
+        for trip in trips:
+            passengerId, TripNumber, date, seatNumber, hasPaid = trip
+            hasPaid = "True" if hasPaid else "False"
+            tripList.append({"TripNumber": TripNumber, "Date": date, "SeatNumber": seatNumber, "hasPaid": hasPaid})
+            
+        return jsonify({"ID": ID, "Name": Name, "Balance": Balance, "Email": Email, "Phone": Phone, "Trips": tripList})
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {e}"}), 500    
