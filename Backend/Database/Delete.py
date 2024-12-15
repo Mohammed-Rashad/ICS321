@@ -251,7 +251,7 @@ def deleteTripStop(tripNumber, date, time):
         cur.close()
 
 
-def deleteReservation(passengerID, tripNumber, date, firstStation, lastStation):
+def deleteReservation(passengerID, tripNumber, date):
     conn = Connect.getConnection()
     cur = conn.cursor()
 
@@ -259,17 +259,16 @@ def deleteReservation(passengerID, tripNumber, date, firstStation, lastStation):
     query = """
         DELETE FROM reservation 
         WHERE PassengerID = %s AND TripNumber = %s AND Date = %s 
-        AND FirstStation = %s AND LastStation = %s
     """
 
     try:
         # Execute the delete query
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cur.execute(query, (passengerID, tripNumber, date))
         conn.commit()
 
         # Check if a row was deleted
         if cur.rowcount > 0:
-            print(f"Deleted reservation for PassengerID = {passengerID}, TripNumber = {tripNumber}, Date = {date}, FirstStation = {firstStation}, LastStation = {lastStation}.")
+            print(f"Deleted reservation for PassengerID = {passengerID}, TripNumber = {tripNumber}, Date = {date}.")
             return True
         else:
             print(f"No reservation found with the given parameters.")

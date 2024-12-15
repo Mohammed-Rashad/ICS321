@@ -1081,7 +1081,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </schema>
     <schema id="294" parent="1" name="train_management_system">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-12-14.19:50:19</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-12-15.10:31:03</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <user id="295" parent="1" name="engmr">
@@ -1398,234 +1398,204 @@ date</ColNames>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="362" parent="306" name="firstStation">
-      <DasType>time|0s</DasType>
+    <column id="362" parent="306" name="SeatNumber">
+      <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="363" parent="306" name="lastStation">
-      <DasType>time|0s</DasType>
+    <column id="363" parent="306" name="hasPaid">
+      <DasType>tinyint(1)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <column id="364" parent="306" name="SeatNumber">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>6</Position>
-    </column>
-    <column id="365" parent="306" name="hasPaid">
-      <DasType>tinyint(1)|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>7</Position>
-    </column>
-    <foreign-key id="366" parent="306" name="reservation_ibfk_3">
+    <foreign-key id="364" parent="306" name="booking_ibfk_2">
       <ColNames>PassengerID</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>person</RefTableName>
     </foreign-key>
-    <foreign-key id="367" parent="306" name="reservation_ibfk_1">
-      <ColNames>TripNumber
-Date
-firstStation</ColNames>
-      <RefColNames>TripNumber
-Date
-Time</RefColNames>
-      <RefTableName>trip_stop</RefTableName>
-    </foreign-key>
-    <foreign-key id="368" parent="306" name="reservation_ibfk_2">
-      <ColNames>TripNumber
-Date
-lastStation</ColNames>
-      <RefColNames>TripNumber
-Date
-Time</RefColNames>
-      <RefTableName>trip_stop</RefTableName>
-    </foreign-key>
-    <index id="369" parent="306" name="PRIMARY">
-      <ColNames>PassengerID
-TripNumber
-Date
-firstStation
-lastStation</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="370" parent="306" name="TripNumber">
-      <ColNames>TripNumber
-Date
-firstStation</ColNames>
-      <Type>btree</Type>
-    </index>
-    <index id="371" parent="306" name="TripNumber_2">
-      <ColNames>TripNumber
-Date
-lastStation</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="372" parent="306" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="373" parent="307" name="Name">
-      <DasType>varchar(15)|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="374" parent="307" name="City">
-      <DasType>varchar(15)|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <index id="375" parent="307" name="PRIMARY">
-      <ColNames>Name</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="376" parent="307" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="377" parent="308" name="TrainNumber">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="378" parent="308" name="MaxPassenger">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <column id="379" parent="308" name="Cost">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-    </column>
-    <index id="380" parent="308" name="PRIMARY">
-      <ColNames>TrainNumber</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="381" parent="308" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="382" parent="309" name="TripNumber">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="383" parent="309" name="Date">
-      <DasType>date|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <column id="384" parent="309" name="TrainNumber">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-    </column>
-    <foreign-key id="385" parent="309" name="trip_ibfk_1">
-      <ColNames>TrainNumber</ColNames>
-      <RefColNames>TrainNumber</RefColNames>
-      <RefTableName>train</RefTableName>
-    </foreign-key>
-    <index id="386" parent="309" name="PRIMARY">
-      <ColNames>TripNumber
-Date</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="387" parent="309" name="TrainNumber">
-      <ColNames>TrainNumber</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="388" parent="309" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="389" parent="310" name="TripNumber">
-      <DasType>int|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="390" parent="310" name="Date">
-      <DasType>date|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <column id="391" parent="310" name="StationName">
-      <DasType>varchar(15)|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-    </column>
-    <column id="392" parent="310" name="Time">
-      <DasType>time|0s</DasType>
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-    </column>
-    <foreign-key id="393" parent="310" name="trip_stop_ibfk_1">
+    <foreign-key id="365" parent="306" name="booking_ibfk_1">
       <ColNames>TripNumber
 Date</ColNames>
       <RefColNames>TripNumber
 Date</RefColNames>
       <RefTableName>trip</RefTableName>
     </foreign-key>
-    <foreign-key id="394" parent="310" name="trip_stop_ibfk_2">
+    <index id="366" parent="306" name="PRIMARY">
+      <ColNames>PassengerID
+TripNumber
+Date</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="367" parent="306" name="TripNumber">
+      <ColNames>TripNumber
+Date</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="368" parent="306" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="369" parent="307" name="Name">
+      <DasType>varchar(15)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="370" parent="307" name="City">
+      <DasType>varchar(15)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <index id="371" parent="307" name="PRIMARY">
+      <ColNames>Name</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="372" parent="307" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="373" parent="308" name="TrainNumber">
+      <DasType>int|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="374" parent="308" name="MaxPassenger">
+      <DasType>int|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <column id="375" parent="308" name="Cost">
+      <DasType>int|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+    </column>
+    <index id="376" parent="308" name="PRIMARY">
+      <ColNames>TrainNumber</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="377" parent="308" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="378" parent="309" name="TripNumber">
+      <DasType>int|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="379" parent="309" name="Date">
+      <DasType>date|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <column id="380" parent="309" name="TrainNumber">
+      <DasType>int|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+    </column>
+    <foreign-key id="381" parent="309" name="trip_ibfk_1">
+      <ColNames>TrainNumber</ColNames>
+      <RefColNames>TrainNumber</RefColNames>
+      <RefTableName>train</RefTableName>
+    </foreign-key>
+    <index id="382" parent="309" name="PRIMARY">
+      <ColNames>TripNumber
+Date</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="383" parent="309" name="TrainNumber">
+      <ColNames>TrainNumber</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="384" parent="309" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="385" parent="310" name="TripNumber">
+      <DasType>int|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="386" parent="310" name="Date">
+      <DasType>date|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <column id="387" parent="310" name="StationName">
+      <DasType>varchar(15)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+    </column>
+    <column id="388" parent="310" name="Time">
+      <DasType>time|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+    </column>
+    <foreign-key id="389" parent="310" name="trip_stop_ibfk_1">
+      <ColNames>TripNumber
+Date</ColNames>
+      <RefColNames>TripNumber
+Date</RefColNames>
+      <RefTableName>trip</RefTableName>
+    </foreign-key>
+    <foreign-key id="390" parent="310" name="trip_stop_ibfk_2">
       <ColNames>StationName</ColNames>
       <RefColNames>Name</RefColNames>
       <RefTableName>station</RefTableName>
     </foreign-key>
-    <index id="395" parent="310" name="PRIMARY">
+    <index id="391" parent="310" name="PRIMARY">
       <ColNames>TripNumber
 Date
 Time</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="396" parent="310" name="StationName">
+    <index id="392" parent="310" name="StationName">
       <ColNames>StationName</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="397" parent="310" name="PRIMARY">
+    <key id="393" parent="310" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="398" parent="311" name="PassengerID">
+    <column id="394" parent="311" name="PassengerID">
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="399" parent="311" name="TripNumber">
+    <column id="395" parent="311" name="TripNumber">
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="400" parent="311" name="Date">
+    <column id="396" parent="311" name="Date">
       <DasType>date|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="401" parent="311" name="firstStation">
+    <column id="397" parent="311" name="firstStation">
       <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="402" parent="311" name="lastStation">
+    <column id="398" parent="311" name="lastStation">
       <DasType>time|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <foreign-key id="403" parent="311" name="waitlist_ibfk_2">
+    <foreign-key id="399" parent="311" name="waitlist_ibfk_2">
       <ColNames>PassengerID</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>person</RefTableName>
     </foreign-key>
-    <foreign-key id="404" parent="311" name="waitlist_ibfk_1">
+    <foreign-key id="400" parent="311" name="waitlist_ibfk_1">
       <ColNames>TripNumber
 Date
 firstStation</ColNames>
@@ -1634,7 +1604,7 @@ Date
 Time</RefColNames>
       <RefTableName>trip_stop</RefTableName>
     </foreign-key>
-    <foreign-key id="405" parent="311" name="waitlist_ibfk_3">
+    <foreign-key id="401" parent="311" name="waitlist_ibfk_3">
       <ColNames>TripNumber
 Date
 lastStation</ColNames>
@@ -1643,7 +1613,7 @@ Date
 Time</RefColNames>
       <RefTableName>trip_stop</RefTableName>
     </foreign-key>
-    <index id="406" parent="311" name="PRIMARY">
+    <index id="402" parent="311" name="PRIMARY">
       <ColNames>PassengerID
 TripNumber
 Date
@@ -1652,19 +1622,19 @@ lastStation</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="407" parent="311" name="TripNumber">
+    <index id="403" parent="311" name="TripNumber">
       <ColNames>TripNumber
 Date
 firstStation</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="408" parent="311" name="TripNumber_2">
+    <index id="404" parent="311" name="TripNumber_2">
       <ColNames>TripNumber
 Date
 lastStation</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="409" parent="311" name="PRIMARY">
+    <key id="405" parent="311" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

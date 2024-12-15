@@ -127,14 +127,14 @@ def insertTripStop(tripNumber, date, time, stationName):
 
 
 # Insert Reservation function
-def insertReservation(passengerID, tripNumber, date, firstStation, lastStation, seatNumber):
+def insertReservation(passengerID, tripNumber, date, seatNumber):
     conn = Connect.getConnection()
 
     cur = conn.cursor()
 
-    query = "INSERT INTO reservation (PassengerID, TripNumber, Date, FirstStation, LastStation, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO reservation (PassengerID, TripNumber, Date, SeatNumber, hasPaid) VALUES (%s, %s, %s, %s, %s)"
     try:
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation, seatNumber, 0))   #default is hasn't paid
+        cur.execute(query, (passengerID, tripNumber, date, seatNumber, 0))   #default is hasn't paid
         conn.commit()
         print("Inserted reservation successfully")
         return True

@@ -222,16 +222,16 @@ def getTripStop(number, date, time):
         cur.close()
 
 
-def getReservation(passengerID, tripNumber, date, firstStation, lastStation):
+def getReservation(passengerID, tripNumber, date):
     conn = Connect.getConnection()  # Assuming getConnection() gives you the active connection
     cur = conn.cursor()
 
     query = """SELECT * FROM reservation 
                WHERE PassengerID = %s AND TripNumber = %s AND Date = %s 
-               AND FirstStation = %s AND LastStation = %s"""
+               """
 
     try:
-        cur.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cur.execute(query, (passengerID, tripNumber, date))
         result = cur.fetchone()
 
         if result:

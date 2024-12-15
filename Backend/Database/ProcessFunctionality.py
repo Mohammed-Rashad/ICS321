@@ -41,7 +41,7 @@ def searchForTrain(initialStation, finalStation, date):
 #Book seats
 
 #Returns a sorted list of available seats
-def availableSeats(tripNumber, date, initialStation, finalStation):     #use initial & final station numbers from the trip stop table
+def availableSeats(tripNumber, date):     #use initial & final station numbers from the trip stop table
     conn = Connect.getConnection()
     cursor = conn.cursor()
 
@@ -50,12 +50,10 @@ def availableSeats(tripNumber, date, initialStation, finalStation):     #use ini
     FROM reservation
     WHERE TripNumber = '%s'
     AND Date = %s
-    AND LastStation > '%s'
-    AND FirstStation < '%s'
     """     #All taken seat numbers
 
     try:
-        cursor.execute(query, (tripNumber, date, initialStation, finalStation))
+        cursor.execute(query, (tripNumber, date))
         takenSeats = cursor.fetchall()
         takenSeats = [i[0] for i in takenSeats]
 
@@ -167,7 +165,7 @@ def deposit(id, amount):
 
 #pay for a reservation
 #Note: returns true if paid successfully or if already paid before
-def pay(passengerID, tripNumber, date, firstStation, lastStation):
+def pay(passengerID, tripNumber, date):
     conn = Connect.getConnection()
     cursor = conn.cursor()
 
@@ -189,12 +187,10 @@ def pay(passengerID, tripNumber, date, firstStation, lastStation):
         FROM reservation
         WHERE PassengerID = '%s'
         AND TripNumber = '%s'
-        AND Date = '%s'
-        AND FirstStation = '%s'
-        AND LastStation = '%s'
+        AND Date = %s
         """
 
-        cursor.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cursor.execute(query, (passengerID, tripNumber, date))
         hasPaid = cursor.fetchall()[0][0]
 
         if hasPaid:
@@ -216,12 +212,10 @@ def pay(passengerID, tripNumber, date, firstStation, lastStation):
         SET hasPaid = 1
         WHERE PassengerID = '%s'
         AND TripNumber = '%s'
-        AND Date = '%s'
-        AND FirstStation = '%s'
-        AND LastStation = '%s'
+        AND Date = %s
         """
 
-        cursor.execute(query, (passengerID, tripNumber, date, firstStation, lastStation))
+        cursor.execute(query, (passengerID, tripNumber))
         conn.commit()
 
         return True
@@ -320,7 +314,7 @@ def getHaventPaid(date):
 
 
 #Using a trigger send a message to a passenger 3 hours before the departure of his train
-
+'''
 #This is what I can do I guess
 #Get id of all passengers leaving from a certain station at a certain trip on a certain day
 def getStationPassengers(tripNumber, date, stationName):
@@ -333,7 +327,6 @@ def getStationPassengers(tripNumber, date, stationName):
     JOIN trip_stop
     ON reservation.TripNumber = trip_stop.TripNumber
     AND reservation.Date = trip_stop.Date
-    AND reservation.FirstStation = trip_stop.time
     WHERE reservation.TripNumber = '%s'
     AND reservation.Date = '%s'
     AND trip_stop.StationName = '%s'
@@ -346,7 +339,7 @@ def getStationPassengers(tripNumber, date, stationName):
 
     except mysql.connector.Error as err:
         print(f"Error searching for reservations leaving from a station: {err}")
-
+'''
 #General Function
 
 #Login and logout
@@ -441,6 +434,7 @@ def getWaitlistLoyalty(trainNumber):
 
 #Average load factor per train on a given date
 #Only gives trains working on that day
+'''
 def getLoadFactor(date):
     conn = Connect.getConnection()
     cursor = conn.cursor()
@@ -497,7 +491,7 @@ def getLoadFactor(date):
 
     finally:
         cursor.close()
-
+'''
 
 #List of dependents travelling on a given date in all trains
 def getAllTravellingDependents(date):
