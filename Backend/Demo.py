@@ -7,8 +7,13 @@ from Database import Insert, Delete, ProcessFunctionality
 #Insert.insertAssigned(202252120, "2024-12-17", 1)
 #Delete.deleteAssigned(202252120, "2024-12-17")
 
-#Insert.insertWaitlist(105, 2, "2024-12-16")
-#if ProcessFunctionality.promoteWaitlist(105, 2, "2024-12-16"):
+#Insert.insertWaitlist(1000000000, 2, "2024-12-16")
+#Insert.insertWaitlist(1100000000, 2, "2024-12-16")
+#Insert.insertWaitlist(1110000000, 2, "2024-12-16")
+
+#print(ProcessFunctionality.getWaitlistLoyalty(2, "2024-12-16"))
+
+#if ProcessFunctionality.promoteWaitlist(1000000000, 2, "2024-12-16"):
 #    print("Successfully promoted the waitlist")
 
 #Insert.insertReservation(101, 1, "2024-12-17", 2)

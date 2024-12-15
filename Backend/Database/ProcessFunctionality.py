@@ -394,7 +394,7 @@ def getTrainStations(trainNumber, date):
 
 
 #Waitlisted loyalty passengers given a train number
-def getWaitlistLoyalty(trainNumber):
+def getWaitlistLoyalty(tripNumber, date):
     conn = Connect.getConnection()
     cursor = conn.cursor()
 
@@ -402,18 +402,16 @@ def getWaitlistLoyalty(trainNumber):
         query = """
         SELECT PassengerID
         FROM waitlist
-        JOIN trip
-        ON waitlist.Date = trip.Date
-        AND waitlist.TripNumber = trip.TripNumber
         JOIN passenger
         ON waitlist.PassengerID = passenger.ID
-        WHERE trip.TrainNumber = '%s'
+        WHERE TripNumber = '%s'
+        AND Date = %s
         AND passenger.isLoyalty = 1
         """
 
-        cursor.execute(query, (trainNumber,))
-        loyaltyWaitlists = cursor.fetchall()
-        return [i[0] for i in loyaltyWaitlists]
+        cursor.execute(query, (tripNumber, date))
+        loyaltyWaitlist = cursor.fetchall()
+        return [i[0] for i in loyaltyWaitlist]
 
     except mysql.connector.Error as err:
         print(f"Error searching for waitlists: {err}")
@@ -491,6 +489,48 @@ def getAllTravellingDependents(date):
     except mysql.connector.Error as err:
         print(f"Error searching for dependents: {err}")
         return None
+
+    finally:
+        cursor.close()
+
+
+def addLoyalty(id):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+        UPDATE passenger
+        SET isLoyalty = 1
+        WHERE ID = %s
+        """
+        cursor.execute(query, (id,))
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"Error adding loyalty: {err}")
+        return False
+
+    finally:
+        cursor.close()
+
+
+def removeLoyalty(id):
+    conn = Connect.getConnection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+        UPDATE passenger
+        SET isLoyalty = 0
+        WHERE ID = %s
+        """
+        cursor.execute(query, (id,))
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"Error removing loyalty: {err}")
+        return False
 
     finally:
         cursor.close()
