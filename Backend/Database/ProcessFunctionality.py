@@ -447,7 +447,7 @@ def getLoadFactor(date):
 
     try:
         query = """
-        SELECT Count(*)
+        SELECT trip.TrainNumber, Count(*)
         FROM reservation
         JOIN trip_stop
         ON reservation.TripNumber = trip_stop.TripNumber
@@ -455,12 +455,11 @@ def getLoadFactor(date):
         and reservation.firstStation <= trip_stop.Time
         and reservation.lastStation > trip_stop.Time
         JOIN trip ON trip_stop.TripNumber = trip.TripNumber and trip_stop.Date = trip.Date
-        WHERE trip_stop.Date = '%s'
+        WHERE trip_stop.Date = %s
         GROUP BY trip.TrainNumber
         """
-        cursor.execute(query)
+        cursor.execute(query, (date, ))
         totalPassengers = cursor.fetchall()
-
         loadFactorDict = {}
 
         for row in totalPassengers:
@@ -486,7 +485,7 @@ def getLoadFactor(date):
 
             totalMax = maxPassenger * stopCount
 
-            loadFactor = totalPassengers / totalMax
+            loadFactor = passengerCount / totalMax
 
             loadFactorDict[trainNumber] = loadFactor
 
