@@ -514,7 +514,7 @@ def getAllTravellingDependents(date):
         WHERE Date = '%s'
         """
 
-        cursor.execute(query)
+        cursor.execute(query, (date,))
         dependents = cursor.fetchall()
         return [i[0] for i in dependents]
 
